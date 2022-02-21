@@ -235,7 +235,7 @@ parser code {:
 :};
 
 // Total keywords of doris
-terminal String KW_ADD, KW_ADMIN, KW_AFTER, KW_AGGREGATE, KW_ALIAS, KW_ALL, KW_ALTER, KW_AND, KW_ANTI, KW_APPEND, KW_AS, KW_ASC, KW_AUTHORS, KW_ARRAY,
+terminal String KW_ADD, KW_ADMIN, KW_AFTER, KW_AGGREGATE, KW_ALIAS, KW_ALL, KW_ALTER, KW_ANALYZE, KW_AND, KW_ANTI, KW_APPEND, KW_AS, KW_ASC, KW_AUTHORS, KW_ARRAY,
     KW_BACKEND, KW_BACKUP, KW_BETWEEN, KW_BEGIN, KW_BIGINT, KW_BINLOG, KW_BITMAP, KW_BITMAP_UNION, KW_BLOB, KW_BOOLEAN, KW_BROKER, KW_BACKENDS, KW_BY, KW_BUILTIN,
     KW_CANCEL, KW_CASE, KW_CAST, KW_CHAIN, KW_CHAR, KW_CHARSET, KW_CHECK, KW_CLUSTER, KW_CLUSTERS, KW_CLEAN,
     KW_COLLATE, KW_COLLATION, KW_COLUMN, KW_COLUMNS, KW_COMMENT, KW_COMMIT, KW_COMMITTED, KW_COMPACT,
@@ -293,7 +293,7 @@ nonterminal List<StatementBase> stmts;
 nonterminal StatementBase stmt, show_stmt, show_param, help_stmt, load_stmt,
     create_routine_load_stmt, pause_routine_load_stmt, resume_routine_load_stmt, stop_routine_load_stmt,
     show_routine_load_stmt, show_routine_load_task_stmt, show_create_routine_load_stmt,
-    describe_stmt, alter_stmt,
+    describe_stmt, alter_stmt, analyze_stmt,
     use_stmt, kill_stmt, drop_stmt, recover_stmt, grant_stmt, revoke_stmt, create_stmt, set_stmt, sync_stmt, cancel_stmt, cancel_param, delete_stmt,
     link_stmt, migrate_stmt, enter_stmt, transaction_stmt, unsupported_stmt, export_stmt, admin_stmt, truncate_stmt,
     import_columns_stmt, import_delete_on_stmt, import_sequence_stmt, import_where_stmt, install_plugin_stmt, uninstall_plugin_stmt,
@@ -741,6 +741,8 @@ stmt ::=
     {: RESULT = stmt; :}
     | unlock_tables_stmt:stmt
     {: RESULT = stmt; :}
+    | analyze_stmt : stmt
+    {: RESULT = stmt; :}
     | /* empty: query only has comments */
     {:
         RESULT = new EmptyStmt();
@@ -766,6 +768,14 @@ des_cluster_name ::=
     | ident:cluster DOT ident:db
     {:
         RESULT = new ClusterName(cluster, db);
+    :}
+    ;
+
+// analyze statment
+analyze_stmt ::=
+    KW_ANALYZE KW_TABLE opt_table_name:tbl opt_col_list:cols opt_properties:properties
+    {:
+        RESULT = new AnalyzeStmt(tbl, cols, properties);
     :}
     ;
 
@@ -2863,6 +2873,11 @@ show_param ::=
     {:
         RESULT = new ShowTableCreationStmt(db, parser.wild);
     :}
+    /* show analyze */
+    | KW_ANALYZE opt_table_name:tbl
+    {:
+        RESULT = new ShowAnalyzeStmt(tbl);
+    :}
     ;
 
 opt_tmp ::=
@@ -3101,6 +3116,10 @@ cancel_param ::=
     | KW_RESTORE opt_db:db
     {:
         RESULT = new CancelBackupStmt(db, true);
+    :}
+	| KW_ANALYZE INTEGER_LITERAL:id
+    {:
+        RESULT = new CancelAnalyzeStmt(id);
     :}
     ;
 

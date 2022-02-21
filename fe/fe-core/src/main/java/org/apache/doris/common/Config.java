@@ -1087,9 +1087,9 @@ public class Config extends ConfigBase {
     public static long es_state_sync_interval_second = 10;
 
     /**
-     * fe will create iceberg table every es_state_sync_interval_secs
+     * fe will create iceberg table every iceberg_table_creation_interval_second
      */
-    @ConfField
+    @ConfField(mutable = true, masterOnly = true)
     public static long iceberg_table_creation_interval_second = 10;
 
     /**
@@ -1572,7 +1572,7 @@ public class Config extends ConfigBase {
      * auto set the slowest compaction replica's status to bad
      */
     @ConfField(mutable = true, masterOnly = true)
-    public static boolean repair_slow_replica = true;
+    public static boolean repair_slow_replica = false;
 
     /*
      * The relocation of a colocation group may involve a large number of tablets moving within the cluster.
@@ -1613,4 +1613,31 @@ public class Config extends ConfigBase {
      */
     @ConfField(mutable = true, masterOnly = true)
     public static long min_bytes_indicate_replica_too_large = 2 * 1024 * 1024 * 1024L;
+
+    /**
+     * If set to TRUE, the column definitions of iceberg table and the doris table must be consistent
+     * If set to FALSE, Doris only creates columns of supported data types.
+     * Default is true.
+     */
+    @ConfField(mutable = true, masterOnly = true)
+    public static boolean iceberg_table_creation_strict_mode = true;
+
+    // statistics
+    /*
+     * the max unfinished statistics job number
+     */
+    @ConfField(mutable = true, masterOnly = true)
+    public static int cbo_max_statistics_job_num = 20;
+    /*
+     * the concurrency of statistics task
+     */
+    // TODO change it to mutable true
+    @ConfField(mutable = false, masterOnly = true)
+    public static int cbo_concurrency_statistics_task_num = 1;
+    /*
+     * default sample percentage
+     * The value from 0 ~ 100. The 100 means no sampling and fetch all data.
+     */
+    @ConfField(mutable = true, masterOnly = true)
+    public static int cbo_default_sample_percentage = 10;
 }
