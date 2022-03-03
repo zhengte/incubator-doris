@@ -18,6 +18,7 @@
 package org.apache.doris.statistics;
 
 import org.apache.doris.common.Config;
+import org.apache.doris.common.DdlException;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class SampleSQLStatisticsTask extends SQLStatisticsTask {
     }
 
     @Override
-    protected void constructQuery() {
+    protected void constructQuery() throws DdlException {
         // TODO
         super.constructQuery();
         // step1: construct table sample

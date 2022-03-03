@@ -59,16 +59,16 @@ public class TableStats {
 
     private long rowCount = -1;
     private long dataSize = -1;
-    private Map<String, ColumnStats> nameToColumnStats = Maps.newConcurrentMap();
+    private final Map<String, ColumnStats> nameToColumnStats = Maps.newConcurrentMap();
 
     public void updateTableStats(Map<String, String> statsNameToValue) throws AnalysisException {
         for (Map.Entry<String, String> entry : statsNameToValue.entrySet()) {
             String statsName = entry.getKey();
             if (statsName.equalsIgnoreCase(ROW_COUNT)) {
-                rowCount = Util.getLongPropertyOrDefault(entry.getValue(), rowCount,
+                this.rowCount = Util.getLongPropertyOrDefault(entry.getValue(), this.rowCount,
                         DESIRED_ROW_COUNT_PRED, ROW_COUNT + " should >= -1");
             } else if (statsName.equalsIgnoreCase(DATA_SIZE)) {
-                dataSize = Util.getLongPropertyOrDefault(entry.getValue(), dataSize,
+                this.dataSize = Util.getLongPropertyOrDefault(entry.getValue(), this.dataSize,
                         DESIRED_DATA_SIZE_PRED, DATA_SIZE + " should >= -1");
             }
         }
@@ -76,22 +76,30 @@ public class TableStats {
 
     public void updateColumnStats(String columnName, Type columnType, Map<String, String> statsNameToValue)
             throws AnalysisException {
-        ColumnStats columnStats = nameToColumnStats.get(columnName);
+        ColumnStats columnStats = this.nameToColumnStats.get(columnName);
         if (columnStats == null) {
             columnStats = new ColumnStats();
-            nameToColumnStats.put(columnName, columnStats);
+            this.nameToColumnStats.put(columnName, columnStats);
         }
         columnStats.updateStats(columnType, statsNameToValue);
     }
 
     public List<String> getShowInfo() {
         List<String> result = Lists.newArrayList();
-        result.add(Long.toString(rowCount));
-        result.add(Long.toString(dataSize));
+        result.add(Long.toString(this.rowCount));
+        result.add(Long.toString(this.dataSize));
         return result;
     }
 
     public Map<String, ColumnStats> getNameToColumnStats() {
-        return nameToColumnStats;
+        return this.nameToColumnStats;
+    }
+
+    public long getRowCount() {
+        return this.rowCount;
+    }
+
+    public long getDataSize() {
+        return this.dataSize;
     }
 }

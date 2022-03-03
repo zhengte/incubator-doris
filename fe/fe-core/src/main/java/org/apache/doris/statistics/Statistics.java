@@ -23,6 +23,7 @@ import org.apache.doris.common.AnalysisException;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * There are the statistics of all of tables.
@@ -40,10 +41,10 @@ public class Statistics {
 
     public void updateTableStats(long tableId, Map<String, String> statsNameToValue)
             throws AnalysisException {
-        TableStats tableStats = idToTableStats.get(tableId);
+        TableStats tableStats = this.idToTableStats.get(tableId);
         if (tableStats == null) {
             tableStats = new TableStats();
-            idToTableStats.put(tableId, tableStats);
+            this.idToTableStats.put(tableId, tableStats);
         }
         tableStats.updateTableStats(statsNameToValue);
     }
@@ -51,23 +52,40 @@ public class Statistics {
     public void updateColumnStats(long tableId, String columnName, Type columnType,
                                   Map<String, String> statsNameToValue)
             throws AnalysisException {
-        TableStats tableStats = idToTableStats.get(tableId);
+        TableStats tableStats = this.idToTableStats.get(tableId);
         if (tableStats == null) {
             tableStats = new TableStats();
-            idToTableStats.put(tableId, tableStats);
+            this.idToTableStats.put(tableId, tableStats);
         }
         tableStats.updateColumnStats(columnName, columnType, statsNameToValue);
     }
 
     public TableStats getTableStats(long tableId) {
-        return idToTableStats.get(tableId);
+        return this.idToTableStats.get(tableId);
     }
 
     public Map<String, ColumnStats> getColumnStats(long tableId) {
-        TableStats tableStats = getTableStats(tableId);
+        TableStats tableStats = this.getTableStats(tableId);
         if (tableStats == null) {
             return null;
         }
         return tableStats.getNameToColumnStats();
+    }
+
+    public void showStatistics(){
+        Set<Map.Entry<Long, TableStats>> entries = this.idToTableStats.entrySet();
+        for (Map.Entry<Long, TableStats> entry : entries) {
+            TableStats value = entry.getValue();
+            long dataSize = value.getDataSize();
+            System.out.println("========= data size ========= " + dataSize);
+            long rowCount = value.getRowCount();
+            System.out.println("========= row count ========= " + rowCount);
+            Map<String, ColumnStats> nameToColumnStats = value.getNameToColumnStats();
+            Set<Map.Entry<String, ColumnStats>> columnToColumnStats = nameToColumnStats.entrySet();
+            for (Map.Entry<String, ColumnStats> columnToColumnStat : columnToColumnStats) {
+                ColumnStats cStat = columnToColumnStat.getValue();
+                System.out.println("========= stats =========: " + columnToColumnStat.getKey() + " " + cStat.getShowInfo());
+            }
+        }
     }
 }

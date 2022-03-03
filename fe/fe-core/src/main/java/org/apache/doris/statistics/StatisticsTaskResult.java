@@ -22,12 +22,57 @@ import java.util.Map;
 public class StatisticsTaskResult {
     private StatsGranularityDesc granularityDesc;
     private StatsCategoryDesc categoryDesc;
-    private Map<StatsType, String> statsTypeToValue;
+    private Map<String, String> statsTypeToValue;
 
-    public StatisticsTaskResult(StatsGranularityDesc granularityDesc, StatsCategoryDesc categoryDesc,
-                                Map<StatsType, String> statsTypeToValue) {
+    private long jobId;
+    private long taskId;
+
+    public StatisticsTaskResult(long jobId, long taskId,StatsGranularityDesc granularityDesc, StatsCategoryDesc categoryDesc,
+                                Map<String, String> statsTypeToValue) {
+        this.jobId = jobId;
+        this.taskId = taskId;
         this.granularityDesc = granularityDesc;
         this.categoryDesc = categoryDesc;
+        this.statsTypeToValue = statsTypeToValue;
+    }
+
+    public long getJobId() {
+        return this.jobId;
+    }
+
+    public void setJobId(long jobId) {
+        this.jobId = jobId;
+    }
+
+    public long getTaskId() {
+        return this.taskId;
+    }
+
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
+    }
+
+    public StatsGranularityDesc getGranularityDesc() {
+        return this.granularityDesc;
+    }
+
+    public void setGranularityDesc(StatsGranularityDesc granularityDesc) {
+        this.granularityDesc = granularityDesc;
+    }
+
+    public StatsCategoryDesc getCategoryDesc() {
+        return this.categoryDesc;
+    }
+
+    public void setCategoryDesc(StatsCategoryDesc categoryDesc) {
+        this.categoryDesc = categoryDesc;
+    }
+
+    public Map<String, String> getStatsTypeToValue() {
+        return this.statsTypeToValue;
+    }
+
+    public void setStatsTypeToValue(Map<String, String> statsTypeToValue) {
         this.statsTypeToValue = statsTypeToValue;
     }
 }

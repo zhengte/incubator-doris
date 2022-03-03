@@ -42,17 +42,20 @@ public class StatisticsJobScheduler extends MasterDaemon {
 
     @Override
     protected void runAfterCatalogReady() {
-        // TODO
-        StatisticsJob pendingJob = pendingJobQueue.peek();
-        // step0: check job state again
-        // step1: divide statistics job to task
-        List<StatisticsTask> statisticsTaskList = divide(pendingJob);
-        // step2: submit
-        Catalog.getCurrentCatalog().getStatisticsTaskScheduler().addTasks(statisticsTaskList);
+        if (!this.pendingJobQueue.isEmpty()) {
+            StatisticsJob pendingJob = this.pendingJobQueue.poll();
+            // step0: check job state again
+            // step1: divide statistics job to task
+            if (pendingJob!=null){
+                List<StatisticsTask> statisticsTaskList = pendingJob.getTaskList();
+                // step2: submit
+                Catalog.getCurrentCatalog().getStatisticsTaskScheduler().addTasks(statisticsTaskList);
+            }
+        }
     }
 
     public void addPendingJob(StatisticsJob statisticsJob) throws IllegalStateException {
-        pendingJobQueue.add(statisticsJob);
+        this.pendingJobQueue.add(statisticsJob);
     }
 
 

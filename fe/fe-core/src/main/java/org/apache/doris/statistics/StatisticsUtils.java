@@ -17,46 +17,25 @@
 
 package org.apache.doris.statistics;
 
-public class StatsCategoryDesc {
-    public enum StatsCategory {
-        TABLE,
-        COLUMN
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+
+import java.io.IOException;
+import java.io.StringWriter;
+
+
+public class StatisticsUtils {
+
+    public static final VelocityEngine VELOCITY_ENGINE;
+
+    static {
+        VELOCITY_ENGINE = new VelocityEngine();
+        VELOCITY_ENGINE.setProperty(VelocityEngine.RUNTIME_LOG_REFERENCE_LOG_INVALID, false);
+        VELOCITY_ENGINE.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute");
+        VELOCITY_ENGINE.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
     }
 
-    private StatsCategory category;
-    private long DbId;
-    private long tableId;
-    private String columnName;
-
-    public StatsCategory getCategory() {
-        return this.category;
-    }
-
-    public void setCategory(StatsCategory category) {
-        this.category = category;
-    }
-
-    public long getDbId() {
-        return this.DbId;
-    }
-
-    public void setDbId(long dbId) {
-        this.DbId = dbId;
-    }
-
-    public long getTableId() {
-        return this.tableId;
-    }
-
-    public void setTableId(long tableId) {
-        this.tableId = tableId;
-    }
-
-    public String getColumnName() {
-        return this.columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
+    public static void buildSql(VelocityContext context, StringWriter sw, String sqlTemplate) throws IOException {
+        VELOCITY_ENGINE.evaluate(context, sw, "", sqlTemplate);
     }
 }

@@ -19,6 +19,7 @@ package org.apache.doris.statistics;
 
 import org.apache.doris.analysis.AnalyzeStmt;
 import org.apache.doris.catalog.Catalog;
+import org.apache.doris.common.DdlException;
 
 import com.google.common.collect.Maps;
 
@@ -28,9 +29,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 import java.util.Set;
 
-/*
-For unified management of statistics job,
-including job addition, cancellation, scheduling, etc.
+/**
+ * For unified management of statistics job,
+ * including job addition, cancellation, scheduling, etc.
  */
 public class StatisticsJobManager {
     private static final Logger LOG = LogManager.getLogger(StatisticsJobManager.class);
@@ -38,36 +39,51 @@ public class StatisticsJobManager {
     // statistics job
     private Map<Long, StatisticsJob> idToStatisticsJob = Maps.newConcurrentMap();
 
-    public void createStatisticsJob(AnalyzeStmt analyzeStmt) {
-        // step0: init statistics job by analyzeStmt
-        StatisticsJob statisticsJob = StatisticsJob.fromAnalyzeStmt(analyzeStmt);
-        // step1: get statistics to be analyzed
-        Set<Long> tableIdList = statisticsJob.relatedTableId();
-        // step2: check restrict
-        checkRestrict(tableIdList);
-        // step3: check permission
-        checkPermission();
-        // step4: create it
-        createStatisticsJob(statisticsJob);
+    public void createStatisticsJob(AnalyzeStmt analyzeStmt) throws DdlException {
+        StatisticsJob statisticsJob = new StatisticsJob(1L, analyzeStmt);
+        statisticsJob.init();
+        this.createStatisticsJob(statisticsJob);
     }
 
     public void createStatisticsJob(StatisticsJob statisticsJob) {
-        idToStatisticsJob.put(statisticsJob.getId(), statisticsJob);
+        this.idToStatisticsJob.put(statisticsJob.getId(), statisticsJob);
         try {
             Catalog.getCurrentCatalog().getStatisticsJobScheduler().addPendingJob(statisticsJob);
+            statisticsJob.setJobState(StatisticsJob.JobState.SCHEDULING);
+            this.idToStatisticsJob.put(statisticsJob.getId(), statisticsJob);
         } catch (IllegalStateException e) {
             LOG.info("The pending statistics job is full. Please submit it again later.");
         }
     }
 
-    // Rule1: The same table cannot have two unfinished statistics jobs
-    // Rule2: The unfinished statistics job could not more then Config.max_statistics_job_num
-    // Rule3: The job for external table is not supported
-    private void checkRestrict(Set<Long> tableIdList) {
-        // TODO
+    public void alterStatisticsJobStats(StatisticsTaskResult taskResult) {
+        long jobId = taskResult.getJobId();
+        StatisticsJob statisticsJob = this.idToStatisticsJob.get(jobId);
+        statisticsJob.setProgress(statisticsJob.getProgress() + 1);
+        if (statisticsJob.getTaskList().size() == statisticsJob.getProgress() + 1) {
+            statisticsJob.setJobState(StatisticsJob.JobState.FINISHED);
+        }
+        this.idToStatisticsJob.put(jobId, statisticsJob);
     }
 
-    private void checkPermission() {
-        // TODO
+    public Map<Long, StatisticsJob> getIdToStatisticsJob() {
+        return this.idToStatisticsJob;
+    }
+
+    public void setIdToStatisticsJob(Map<Long, StatisticsJob> idToStatisticsJob) {
+        this.idToStatisticsJob = idToStatisticsJob;
+    }
+
+    public void showJobsStats(){
+        Set<Map.Entry<Long, StatisticsJob>> entries = this.idToStatisticsJob.entrySet();
+        for (Map.Entry<Long, StatisticsJob> entry : entries) {
+            StatisticsJob value = entry.getValue();
+            long id = value.getId();
+            StatisticsJob.JobState jobState = value.getJobState();
+            System.out.println("========= job state =========: " + id + " " + jobState);
+            int progress = value.getProgress();
+            int size = value.getTaskList().size();
+            System.out.println("========= progress state =========: " + progress + "/" + size);
+        }
     }
 }
