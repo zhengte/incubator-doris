@@ -48,8 +48,10 @@ public class MetaStatisticsTask extends StatisticsTask {
                     this.computeTableRowCount(statsType, statsTypeToValue);
                     break;
                 case MAX_SIZE:
+                    this.getColMaxSize(statsType, statsTypeToValue);
+                    break;
                 case AVG_SIZE:
-                    this.getColMaxAndAvgSize(statsType, statsTypeToValue);
+                    this.getColAvgSize(statsType, statsTypeToValue);
                     break;
                 case DATA_SIZE:
                     this.computeDataSize(granularity, statsType, statsTypeToValue);
@@ -119,7 +121,22 @@ public class MetaStatisticsTask extends StatisticsTask {
         statsTypeToValue.put(statsType.getValue(), String.valueOf(rowCount));
     }
 
-    private void getColMaxAndAvgSize(StatsType statsType, Map<String, String> statsTypeToValue) throws DdlException {
+    private void getColMaxSize(StatsType statsType, Map<String, String> statsTypeToValue) throws DdlException {
+        StatsCategoryDesc categoryDesc = this.getCategoryDesc();
+        long dbId = categoryDesc.getDbId();
+        Database db = Catalog.getCurrentCatalog().getDbOrDdlException(dbId);
+        long tableId = categoryDesc.getTableId();
+        Table table = db.getTableOrDdlException(tableId);
+        StatsGranularityDesc granularityDesc = this.getGranularityDesc();
+        StatsGranularityDesc.StatsGranularity granularity = granularityDesc.getGranularity();
+        String columnName = categoryDesc.getColumnName();
+        Column column = table.getColumn(columnName);
+        //TODO 确认类型大小
+        int typeSize = column.getDataType().getSlotSize();
+        statsTypeToValue.put(statsType.getValue(), String.valueOf(typeSize));
+    }
+
+    private void getColAvgSize(StatsType statsType, Map<String, String> statsTypeToValue) throws DdlException {
         StatsCategoryDesc categoryDesc = this.getCategoryDesc();
         long dbId = categoryDesc.getDbId();
         Database db = Catalog.getCurrentCatalog().getDbOrDdlException(dbId);

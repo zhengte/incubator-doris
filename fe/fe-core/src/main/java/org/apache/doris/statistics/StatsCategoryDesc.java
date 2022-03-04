@@ -24,7 +24,7 @@ public class StatsCategoryDesc {
     }
 
     private StatsCategory category;
-    private long DbId;
+    private long dbId;
     private long tableId;
     private String columnName;
 
@@ -37,11 +37,11 @@ public class StatsCategoryDesc {
     }
 
     public long getDbId() {
-        return this.DbId;
+        return this.dbId;
     }
 
     public void setDbId(long dbId) {
-        this.DbId = dbId;
+        this.dbId = dbId;
     }
 
     public long getTableId() {

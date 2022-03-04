@@ -40,8 +40,7 @@ public class StatisticsJobManager {
     private Map<Long, StatisticsJob> idToStatisticsJob = Maps.newConcurrentMap();
 
     public void createStatisticsJob(AnalyzeStmt analyzeStmt) throws DdlException {
-        StatisticsJob statisticsJob = new StatisticsJob(1L, analyzeStmt);
-        statisticsJob.init();
+        StatisticsJob statisticsJob = new StatisticsJob(analyzeStmt);
         this.createStatisticsJob(statisticsJob);
     }
 

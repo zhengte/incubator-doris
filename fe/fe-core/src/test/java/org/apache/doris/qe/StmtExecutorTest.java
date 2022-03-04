@@ -85,90 +85,90 @@ public class StmtExecutorTest {
 
     @Before
     public void setUp() throws IOException {
-        state = new QueryState();
-        scheduler = new ConnectScheduler(10);
-        ctx = new ConnectContext(socketChannel);
+        this.state = new QueryState();
+        this.scheduler = new ConnectScheduler(10);
+        this.ctx = new ConnectContext(this.socketChannel);
 
         SessionVariable sessionVariable = new SessionVariable();
         MysqlSerializer serializer = MysqlSerializer.newInstance();
         Catalog catalog = AccessTestUtil.fetchAdminCatalog();
 
-        channel = new MysqlChannel(socketChannel);
-        new Expectations(channel) {
+        this.channel = new MysqlChannel(this.socketChannel);
+        new Expectations(this.channel) {
             {
-                channel.sendOnePacket((ByteBuffer) any);
-                minTimes = 0;
+                StmtExecutorTest.this.channel.sendOnePacket((ByteBuffer) this.any);
+                this.minTimes = 0;
 
-                channel.reset();
-                minTimes = 0;
+                StmtExecutorTest.this.channel.reset();
+                this.minTimes = 0;
             }
         };
 
-        new Expectations(ctx) {
+        new Expectations(this.ctx) {
             {
-                ctx.getMysqlChannel();
-                minTimes = 0;
-                result = channel;
+                StmtExecutorTest.this.ctx.getMysqlChannel();
+                this.minTimes = 0;
+                this.result = StmtExecutorTest.this.channel;
 
-                ctx.getSerializer();
-                minTimes = 0;
-                result = serializer;
+                StmtExecutorTest.this.ctx.getSerializer();
+                this.minTimes = 0;
+                this.result = serializer;
 
-                ctx.getCatalog();
-                minTimes = 0;
-                result = catalog;
+                StmtExecutorTest.this.ctx.getCatalog();
+                this.minTimes = 0;
+                this.result = catalog;
 
-                ctx.getState();
-                minTimes = 0;
-                result = state;
+                StmtExecutorTest.this.ctx.getState();
+                this.minTimes = 0;
+                this.result = StmtExecutorTest.this.state;
 
-                ctx.getConnectScheduler();
-                minTimes = 0;
-                result = scheduler;
+                StmtExecutorTest.this.ctx.getConnectScheduler();
+                this.minTimes = 0;
+                this.result = StmtExecutorTest.this.scheduler;
 
-                ctx.getConnectionId();
-                minTimes = 0;
-                result = 1;
+                StmtExecutorTest.this.ctx.getConnectionId();
+                this.minTimes = 0;
+                this.result = 1;
 
-                ctx.getQualifiedUser();
-                minTimes = 0;
-                result = "testUser";
+                StmtExecutorTest.this.ctx.getQualifiedUser();
+                this.minTimes = 0;
+                this.result = "testUser";
 
-                ctx.getForwardedStmtId();
-                minTimes = 0;
-                result = 123L;
+                StmtExecutorTest.this.ctx.getForwardedStmtId();
+                this.minTimes = 0;
+                this.result = 123L;
 
-                ctx.setKilled();
-                minTimes = 0;
+                StmtExecutorTest.this.ctx.setKilled();
+                this.minTimes = 0;
 
-                ctx.updateReturnRows(anyInt);
-                minTimes = 0;
+                StmtExecutorTest.this.ctx.updateReturnRows(this.anyInt);
+                this.minTimes = 0;
 
-                ctx.setQueryId((TUniqueId) any);
-                minTimes = 0;
+                StmtExecutorTest.this.ctx.setQueryId((TUniqueId) this.any);
+                this.minTimes = 0;
 
-                ctx.queryId();
-                minTimes = 0;
-                result = new TUniqueId();
+                StmtExecutorTest.this.ctx.queryId();
+                this.minTimes = 0;
+                this.result = new TUniqueId();
 
-                ctx.getStartTime();
-                minTimes = 0;
-                result = 0L;
+                StmtExecutorTest.this.ctx.getStartTime();
+                this.minTimes = 0;
+                this.result = 0L;
 
-                ctx.getDatabase();
-                minTimes = 0;
-                result = "testCluster:testDb";
+                StmtExecutorTest.this.ctx.getDatabase();
+                this.minTimes = 0;
+                this.result = "testCluster:testDb";
 
-                ctx.getSessionVariable();
-                minTimes = 0;
-                result = sessionVariable;
+                StmtExecutorTest.this.ctx.getSessionVariable();
+                this.minTimes = 0;
+                this.result = sessionVariable;
 
-                ctx.setStmtId(anyLong);
-                minTimes = 0;
+                StmtExecutorTest.this.ctx.setStmtId(this.anyLong);
+                this.minTimes = 0;
 
-                ctx.getStmtId();
-                minTimes = 0;
-                result = 1L;
+                StmtExecutorTest.this.ctx.getStmtId();
+                this.minTimes = 0;
+                this.result = 1L;
             }
         };
     }
@@ -180,177 +180,178 @@ public class StmtExecutorTest {
                            @Mocked Coordinator coordinator) throws Exception {
         Catalog catalog = Catalog.getCurrentCatalog();
         Deencapsulation.setField(catalog, "canRead", new AtomicBoolean(true));
+        Deencapsulation.setField(catalog, "fullNameToDb", new AtomicBoolean(true));
 
         new Expectations() {
             {
-                queryStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                queryStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 queryStmt.getColLabels();
-                minTimes = 0;
-                result = Lists.<String>newArrayList();
+                this.minTimes = 0;
+                this.result = Lists.<String>newArrayList();
 
                 queryStmt.getResultExprs();
-                minTimes = 0;
-                result = Lists.<Expr>newArrayList();
+                this.minTimes = 0;
+                this.result = Lists.<Expr>newArrayList();
 
                 queryStmt.isExplain();
-                minTimes = 0;
-                result = false;
+                this.minTimes = 0;
+                this.result = false;
 
-                queryStmt.getTables((Analyzer) any, (SortedMap) any, Sets.newHashSet());
-                minTimes = 0;
+                queryStmt.getTables((Analyzer) this.any, (SortedMap) this.any, Sets.newHashSet());
+                this.minTimes = 0;
 
                 queryStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
-                queryStmt.rewriteExprs((ExprRewriter) any);
-                minTimes = 0;
+                queryStmt.rewriteExprs((ExprRewriter) this.any);
+                this.minTimes = 0;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(queryStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
-                planner.plan((QueryStmt) any, (Analyzer) any, (TQueryOptions) any);
-                minTimes = 0;
+                planner.plan((QueryStmt) this.any, (Analyzer) this.any, (TQueryOptions) this.any);
+                this.minTimes = 0;
 
                 // mock coordinator
                 coordinator.exec();
-                minTimes = 0;
+                this.minTimes = 0;
 
                 coordinator.endProfile();
-                minTimes = 0;
+                this.minTimes = 0;
 
                 coordinator.getQueryProfile();
-                minTimes = 0;
-                result = new RuntimeProfile();
+                this.minTimes = 0;
+                this.result = new RuntimeProfile();
 
                 coordinator.getNext();
-                minTimes = 0;
-                result = new RowBatch();
+                this.minTimes = 0;
+                this.result = new RowBatch();
 
                 coordinator.getJobId();
-                minTimes = 0;
-                result = -1L;
+                this.minTimes = 0;
+                this.result = -1L;
 
                 Catalog.getCurrentCatalog();
-                minTimes = 0;
-                result = catalog;
+                this.minTimes = 0;
+                this.result = catalog;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.EOF, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.EOF, this.state.getStateType());
     }
 
     @Test
     public void testShow(@Mocked ShowStmt showStmt, @Mocked SqlParser parser, @Mocked ShowExecutor executor) throws Exception {
         new Expectations() {
             {
-                showStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                showStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 showStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
-                showStmt.toSelectStmt((Analyzer) any);
-                minTimes = 0;
-                result = null;
+                showStmt.toSelectStmt((Analyzer) this.any);
+                this.minTimes = 0;
+                this.result = null;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(showStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
                 // mock show
                 List<List<String>> rows = Lists.newArrayList();
                 rows.add(Lists.newArrayList("abc", "bcd"));
                 executor.execute();
-                minTimes = 0;
-                result = new ShowResultSet(new ShowAuthorStmt().getMetaData(), rows);
+                this.minTimes = 0;
+                this.result = new ShowResultSet(new ShowAuthorStmt().getMetaData(), rows);
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.EOF, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.EOF, this.state.getStateType());
     }
 
     @Test
     public void testShowNull(@Mocked ShowStmt showStmt, @Mocked SqlParser parser, @Mocked ShowExecutor executor) throws Exception {
         new Expectations() {
             {
-                showStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                showStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 showStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
-                showStmt.toSelectStmt((Analyzer) any);
-                minTimes = 0;
-                result = null;
+                showStmt.toSelectStmt((Analyzer) this.any);
+                this.minTimes = 0;
+                this.result = null;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(showStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
                 // mock show
                 List<List<String>> rows = Lists.newArrayList();
                 rows.add(Lists.newArrayList("abc", "bcd"));
                 executor.execute();
-                minTimes = 0;
-                result = null;
+                this.minTimes = 0;
+                this.result = null;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.OK, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.OK, this.state.getStateType());
     }
 
     @Test
     public void testKill(@Mocked KillStmt killStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                killStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                killStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 killStmt.getConnectionId();
-                minTimes = 0;
-                result = 1L;
+                this.minTimes = 0;
+                this.result = 1L;
 
                 killStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(killStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
-        new Expectations(scheduler) {
+        new Expectations(this.scheduler) {
             {
                 // suicide
-                scheduler.getContext(1);
-                result = ctx;
+                StmtExecutorTest.this.scheduler.getContext(1);
+                this.result = StmtExecutorTest.this.ctx;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.OK, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.OK, this.state.getStateType());
     }
 
     @Test
@@ -359,55 +360,55 @@ public class StmtExecutorTest {
 
         new Expectations() {
             {
-                killStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                killStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 killStmt.getConnectionId();
-                minTimes = 0;
-                result = 1L;
+                this.minTimes = 0;
+                this.result = 1L;
 
                 killStmt.isConnectionKill();
-                minTimes = 0;
-                result = true;
+                this.minTimes = 0;
+                this.result = true;
 
                 killStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(killStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
                 killCtx.getCatalog();
-                minTimes = 0;
-                result = killCatalog;
+                this.minTimes = 0;
+                this.result = killCatalog;
 
                 killCtx.getQualifiedUser();
-                minTimes = 0;
-                result = "blockUser";
+                this.minTimes = 0;
+                this.result = "blockUser";
 
                 killCtx.kill(true);
-                minTimes = 0;
+                this.minTimes = 0;
 
                 ConnectContext.get();
-                minTimes = 0;
-                result = ctx;
+                this.minTimes = 0;
+                this.result = StmtExecutorTest.this.ctx;
             }
         };
 
-        new Expectations(scheduler) {
+        new Expectations(this.scheduler) {
             {
                 // suicide
-                scheduler.getContext(1);
-                result = killCtx;
+                StmtExecutorTest.this.scheduler.getContext(1);
+                this.result = killCtx;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 
     @Test
@@ -415,123 +416,123 @@ public class StmtExecutorTest {
         Catalog killCatalog = AccessTestUtil.fetchAdminCatalog();
         new Expectations() {
             {
-                killStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                killStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 killStmt.getConnectionId();
-                minTimes = 0;
-                result = 1;
+                this.minTimes = 0;
+                this.result = 1;
 
                 killStmt.isConnectionKill();
-                minTimes = 0;
-                result = true;
+                this.minTimes = 0;
+                this.result = true;
 
                 killStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(killStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
                 killCtx.getCatalog();
-                minTimes = 0;
-                result = killCatalog;
+                this.minTimes = 0;
+                this.result = killCatalog;
 
                 killCtx.getQualifiedUser();
-                minTimes = 0;
-                result = "killUser";
+                this.minTimes = 0;
+                this.result = "killUser";
 
                 killCtx.kill(true);
-                minTimes = 0;
+                this.minTimes = 0;
 
                 ConnectContext.get();
-                minTimes = 0;
-                result = ctx;
+                this.minTimes = 0;
+                this.result = StmtExecutorTest.this.ctx;
             }
         };
 
-        new Expectations(scheduler) {
+        new Expectations(this.scheduler) {
             {
                 // suicide
-                scheduler.getContext(1);
-                result = killCtx;
+                StmtExecutorTest.this.scheduler.getContext(1);
+                this.result = killCtx;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 
     @Test
     public void testKillNoCtx(@Mocked KillStmt killStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                killStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                killStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 killStmt.getConnectionId();
-                minTimes = 0;
-                result = 1;
+                this.minTimes = 0;
+                this.result = 1;
 
                 killStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(killStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
-        new Expectations(scheduler) {
+        new Expectations(this.scheduler) {
             {
-                scheduler.getContext(1);
-                result = null;
+                StmtExecutorTest.this.scheduler.getContext(1);
+                this.result = null;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 
     @Test
     public void testSet(@Mocked SetStmt setStmt, @Mocked SqlParser parser, @Mocked SetExecutor executor) throws Exception {
         new Expectations() {
             {
-                setStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                setStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 setStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(setStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
                 // Mock set
                 executor.execute();
-                minTimes = 0;
+                this.minTimes = 0;
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.OK, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.OK, this.state.getStateType());
     }
 
     @Test
     public void testStmtWithUserInfo(@Mocked StatementBase stmt, @Mocked ConnectContext context) throws Exception {
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, stmt);
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, stmt);
         Deencapsulation.setField(stmtExecutor, "parsedStmt", null);
         Deencapsulation.setField(stmtExecutor, "originStmt", new OriginStatement("show databases;", 1));
         stmtExecutor.execute();
@@ -543,46 +544,46 @@ public class StmtExecutorTest {
     public void testSetFail(@Mocked SetStmt setStmt, @Mocked SqlParser parser, @Mocked SetExecutor executor) throws Exception {
         new Expectations() {
             {
-                setStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                setStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 setStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(setStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
 
                 // Mock set
                 executor.execute();
-                minTimes = 0;
-                result = new DdlException("failed");
+                this.minTimes = 0;
+                this.result = new DdlException("failed");
             }
         };
 
-        StmtExecutor stmtExecutor = new StmtExecutor(ctx, "");
+        StmtExecutor stmtExecutor = new StmtExecutor(this.ctx, "");
         stmtExecutor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 
     @Test
     public void testDdl(@Mocked DdlStmt ddlStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                ddlStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                ddlStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 ddlStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(ddlStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
@@ -590,32 +591,32 @@ public class StmtExecutorTest {
         new Expectations(ddlExecutor) {
             {
                 // Mock ddl
-                DdlExecutor.execute((Catalog) any, (DdlStmt) any);
-                minTimes = 0;
+                DdlExecutor.execute((Catalog) this.any, (DdlStmt) this.any);
+                this.minTimes = 0;
             }
         };
 
-        StmtExecutor executor = new StmtExecutor(ctx, "");
+        StmtExecutor executor = new StmtExecutor(this.ctx, "");
         executor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.OK, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.OK, this.state.getStateType());
     }
 
     @Test
     public void testDdlFail(@Mocked DdlStmt ddlStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                ddlStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                ddlStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 ddlStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(ddlStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
@@ -623,33 +624,33 @@ public class StmtExecutorTest {
         new Expectations(ddlExecutor) {
             {
                 // Mock ddl
-                DdlExecutor.execute((Catalog) any, (DdlStmt) any);
-                minTimes = 0;
-                result = new DdlException("ddl fail");
+                DdlExecutor.execute((Catalog) this.any, (DdlStmt) this.any);
+                this.minTimes = 0;
+                this.result = new DdlException("ddl fail");
             }
         };
 
-        StmtExecutor executor = new StmtExecutor(ctx, "");
+        StmtExecutor executor = new StmtExecutor(this.ctx, "");
         executor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 
     @Test
     public void testDdlFail2(@Mocked DdlStmt ddlStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                ddlStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                ddlStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 ddlStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(ddlStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
@@ -657,80 +658,80 @@ public class StmtExecutorTest {
         new Expectations(ddlExecutor) {
             {
                 // Mock ddl
-                DdlExecutor.execute((Catalog) any, (DdlStmt) any);
-                minTimes = 0;
-                result = new Exception("bug");
+                DdlExecutor.execute((Catalog) this.any, (DdlStmt) this.any);
+                this.minTimes = 0;
+                this.result = new Exception("bug");
             }
         };
 
-        StmtExecutor executor = new StmtExecutor(ctx, "");
+        StmtExecutor executor = new StmtExecutor(this.ctx, "");
         executor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 
     @Test
     public void testUse(@Mocked UseStmt useStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                useStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                useStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 useStmt.getDatabase();
-                minTimes = 0;
-                result = "testCluster:testDb";
+                this.minTimes = 0;
+                this.result = "testCluster:testDb";
 
                 useStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 useStmt.getClusterName();
-                minTimes = 0;
-                result = "testCluster";
+                this.minTimes = 0;
+                this.result = "testCluster";
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(useStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
-        StmtExecutor executor = new StmtExecutor(ctx, "");
+        StmtExecutor executor = new StmtExecutor(this.ctx, "");
         executor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.OK, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.OK, this.state.getStateType());
     }
 
     @Test
     public void testUseFail(@Mocked UseStmt useStmt, @Mocked SqlParser parser) throws Exception {
         new Expectations() {
             {
-                useStmt.analyze((Analyzer) any);
-                minTimes = 0;
+                useStmt.analyze((Analyzer) this.any);
+                this.minTimes = 0;
 
                 useStmt.getDatabase();
-                minTimes = 0;
-                result = "blockDb";
+                this.minTimes = 0;
+                this.result = "blockDb";
 
                 useStmt.getRedirectStatus();
-                minTimes = 0;
-                result = RedirectStatus.NO_FORWARD;
+                this.minTimes = 0;
+                this.result = RedirectStatus.NO_FORWARD;
 
                 useStmt.getClusterName();
-                minTimes = 0;
-                result = "testCluster";
+                this.minTimes = 0;
+                this.result = "testCluster";
 
                 Symbol symbol = new Symbol(0, Lists.newArrayList(useStmt));
                 parser.parse();
-                minTimes = 0;
-                result = symbol;
+                this.minTimes = 0;
+                this.result = symbol;
             }
         };
 
-        StmtExecutor executor = new StmtExecutor(ctx, "");
+        StmtExecutor executor = new StmtExecutor(this.ctx, "");
         executor.execute();
 
-        Assert.assertEquals(QueryState.MysqlStateType.ERR, state.getStateType());
+        Assert.assertEquals(QueryState.MysqlStateType.ERR, this.state.getStateType());
     }
 }
 
