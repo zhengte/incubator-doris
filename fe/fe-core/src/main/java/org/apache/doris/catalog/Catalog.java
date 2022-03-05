@@ -462,11 +462,11 @@ public class Catalog {
     public List<Frontend> getFrontends(FrontendNodeType nodeType) {
         if (nodeType == null) {
             // get all
-            return Lists.newArrayList(this.frontends.values());
+            return Lists.newArrayList(frontends.values());
         }
 
         List<Frontend> result = Lists.newArrayList();
-        for (Frontend frontend : this.frontends.values()) {
+        for (Frontend frontend : frontends.values()) {
             if (frontend.getRole() == nodeType) {
                 result.add(frontend);
             }
@@ -476,11 +476,11 @@ public class Catalog {
     }
 
     public List<String> getRemovedFrontendNames() {
-        return Lists.newArrayList(this.removedFrontends);
+        return Lists.newArrayList(removedFrontends);
     }
 
     public JournalObservable getJournalObservable() {
-        return this.journalObservable;
+        return journalObservable;
     }
 
     private SystemInfoService getClusterInfo() {
@@ -509,7 +509,7 @@ public class Catalog {
     }
 
     public MetaReplayState getMetaReplayState() {
-        return this.metaReplayState;
+        return metaReplayState;
     }
 
     public DynamicPartitionScheduler getDynamicPartitionScheduler() {
@@ -560,7 +560,7 @@ public class Catalog {
         this.masterIp = "";
 
         this.systemInfo = new SystemInfoService();
-        this.heartbeatMgr = new HeartbeatMgr(this.systemInfo, !isCheckpointCatalog);
+        this.heartbeatMgr = new HeartbeatMgr(systemInfo, !isCheckpointCatalog);
         this.tabletInvertedIndex = new TabletInvertedIndex();
         this.colocateTableIndex = new ColocateTableIndex();
         this.recycleBin = new CatalogRecycleBin();
@@ -587,7 +587,7 @@ public class Catalog {
         this.statisticsTaskScheduler = new StatisticsTaskScheduler();
 
         this.auth = new PaloAuth();
-        this.domainResolver = new DomainResolver(this.auth);
+        this.domainResolver = new DomainResolver(auth);
 
         this.esRepository = new EsRepository();
 
@@ -595,8 +595,8 @@ public class Catalog {
         this.metaContext.setThreadLocalInfo();
 
         this.stat = new TabletSchedulerStat();
-        this.tabletScheduler = new TabletScheduler(this, this.systemInfo, this.tabletInvertedIndex, this.stat, Config.tablet_rebalancer_type);
-        this.tabletChecker = new TabletChecker(this, this.systemInfo, this.tabletScheduler, this.stat);
+        this.tabletScheduler = new TabletScheduler(this, systemInfo, tabletInvertedIndex, stat, Config.tablet_rebalancer_type);
+        this.tabletChecker = new TabletChecker(this, systemInfo, tabletScheduler, stat);
 
         // The pendingLoadTaskScheduler's queue size should not less than Config.desired_max_waiting_jobs.
         // So that we can guarantee that all submitted load jobs can be scheduled without being starved.
@@ -609,15 +609,15 @@ public class Catalog {
                 Integer.MAX_VALUE, !isCheckpointCatalog);
 
         this.loadJobScheduler = new LoadJobScheduler();
-        this.loadManager = new LoadManager(this.loadJobScheduler);
+        this.loadManager = new LoadManager(loadJobScheduler);
         this.streamLoadRecordMgr = new StreamLoadRecordMgr("stream_load_record_manager", Config.fetch_stream_load_record_interval_second * 1000);
         this.icebergTableCreationRecordMgr = new IcebergTableCreationRecordMgr();
-        this.loadEtlChecker = new LoadEtlChecker(this.loadManager);
-        this.loadLoadingChecker = new LoadLoadingChecker(this.loadManager);
-        this.routineLoadScheduler = new RoutineLoadScheduler(this.routineLoadManager);
-        this.routineLoadTaskScheduler = new RoutineLoadTaskScheduler(this.routineLoadManager);
+        this.loadEtlChecker = new LoadEtlChecker(loadManager);
+        this.loadLoadingChecker = new LoadLoadingChecker(loadManager);
+        this.routineLoadScheduler = new RoutineLoadScheduler(routineLoadManager);
+        this.routineLoadTaskScheduler = new RoutineLoadTaskScheduler(routineLoadManager);
 
-        this.syncChecker = new SyncChecker(this.syncJobManager);
+        this.syncChecker = new SyncChecker(syncJobManager);
         this.smallFileMgr = new SmallFileMgr();
 
         this.dynamicPartitionScheduler = new DynamicPartitionScheduler("DynamicPartitionScheduler",
@@ -658,11 +658,11 @@ public class Catalog {
     }
 
     public BrokerMgr getBrokerMgr() {
-        return this.brokerMgr;
+        return brokerMgr;
     }
 
     public ResourceMgr getResourceMgr() {
-        return this.resourceMgr;
+        return resourceMgr;
     }
 
     public static GlobalTransactionMgr getCurrentGlobalTransactionMgr() {
@@ -670,31 +670,31 @@ public class Catalog {
     }
 
     public GlobalTransactionMgr getGlobalTransactionMgr() {
-        return this.globalTransactionMgr;
+        return globalTransactionMgr;
     }
 
     public PluginMgr getPluginMgr() {
-        return this.pluginMgr;
+        return pluginMgr;
     }
 
     public PaloAuth getAuth() {
-        return this.auth;
+        return auth;
     }
 
     public TabletScheduler getTabletScheduler() {
-        return this.tabletScheduler;
+        return tabletScheduler;
     }
 
     public TabletChecker getTabletChecker() {
-        return this.tabletChecker;
+        return tabletChecker;
     }
 
     public ConcurrentHashMap<String, Database> getFullNameToDb() {
-        return this.fullNameToDb;
+        return fullNameToDb;
     }
 
     public AuditEventProcessor getAuditEventProcessor() {
-        return this.auditEventProcessor;
+        return auditEventProcessor;
     }
 
     // use this to get correct ClusterInfoService instance
@@ -739,21 +739,21 @@ public class Catalog {
 
     // For unit test only
     public Checkpoint getCheckpointer() {
-        return this.checkpointer;
+        return checkpointer;
     }
 
     // statistics
     public StatisticsManager getStatisticsManager() {
-        return this.statisticsManager;
+        return statisticsManager;
     }
     public StatisticsJobManager getStatisticsJobManager() {
-        return this.statisticsJobManager;
+        return statisticsJobManager;
     }
     public StatisticsJobScheduler getStatisticsJobScheduler() {
-        return this.statisticsJobScheduler;
+        return statisticsJobScheduler;
     }
     public StatisticsTaskScheduler getStatisticsTaskScheduler() {
-        return this.statisticsTaskScheduler;
+        return statisticsTaskScheduler;
     }
 
 
@@ -761,10 +761,10 @@ public class Catalog {
     private boolean tryLock(boolean mustLock) {
         while (true) {
             try {
-                if (!this.lock.tryLock(Config.catalog_try_lock_timeout_ms, TimeUnit.MILLISECONDS)) {
+                if (!lock.tryLock(Config.catalog_try_lock_timeout_ms, TimeUnit.MILLISECONDS)) {
                     if (LOG.isDebugEnabled()) {
                         // to see which thread held this lock for long time.
-                        Thread owner = this.lock.getOwner();
+                        Thread owner = lock.getOwner();
                         if (owner != null) {
                             LOG.debug("catalog lock is held by: {}", Util.dumpThread(owner, 10));
                         }
@@ -782,24 +782,24 @@ public class Catalog {
                 if (mustLock) {
                     continue;
                 } else {
-                    return this.lock.isHeldByCurrentThread();
+                    return lock.isHeldByCurrentThread();
                 }
             }
         }
     }
 
     private void unlock() {
-        if (this.lock.isHeldByCurrentThread()) {
+        if (lock.isHeldByCurrentThread()) {
             this.lock.unlock();
         }
     }
 
     public String getBdbDir() {
-        return this.bdbDir;
+        return bdbDir;
     }
 
     public String getImageDir() {
-        return this.imageDir;
+        return imageDir;
     }
 
     public void initialize(String[] args) throws Exception {
@@ -812,11 +812,11 @@ public class Catalog {
         this.imageDir = this.metaDir + IMAGE_DIR;
 
         // 0. get local node and helper node info
-        this.getSelfHostPort();
-        this.getHelperNodes(args);
+        getSelfHostPort();
+        getHelperNodes(args);
 
         // 1. check and create dirs and files
-        File meta = new File(this.metaDir);
+        File meta = new File(metaDir);
         if (!meta.exists()) {
             LOG.warn("Doris' meta dir {} does not exist. You need to create it before starting FE", meta.getAbsolutePath());
             throw new Exception(meta.getAbsolutePath() + " does not exist, will exit");
@@ -837,45 +837,45 @@ public class Catalog {
         }
 
         // init plugin manager
-        this.pluginMgr.init();
-        this.auditEventProcessor.start();
+        pluginMgr.init();
+        auditEventProcessor.start();
 
         // 2. get cluster id and role (Observer or Follower)
-        this.getClusterIdAndRole();
+        getClusterIdAndRole();
 
         // 3. Load image first and replay edits
-        this.editLog = new EditLog(this.nodeName);
-        this.loadImage(this.imageDir); // load image file
-        this.editLog.open(); // open bdb env
-        this.globalTransactionMgr.setEditLog(this.editLog);
-        this.idGenerator.setEditLog(this.editLog);
+        this.editLog = new EditLog(nodeName);
+        loadImage(this.imageDir); // load image file
+        editLog.open(); // open bdb env
+        this.globalTransactionMgr.setEditLog(editLog);
+        this.idGenerator.setEditLog(editLog);
 
         // 4. create load and export job label cleaner thread
-        this.createLabelCleaner();
+        createLabelCleaner();
 
         // 5. create txn cleaner thread
-        this.createTxnCleaner();
+        createTxnCleaner();
 
         // 6. start state listener thread
-        this.createStateListener();
-        this.listener.start();
+        createStateListener();
+        listener.start();
     }
 
     // wait until FE is ready.
     public void waitForReady() throws InterruptedException {
         while (true) {
-            if (this.isReady()) {
-                LOG.info("catalog is ready. FE type: {}", this.feType);
+            if (isReady()) {
+                LOG.info("catalog is ready. FE type: {}", feType);
                 break;
             }
 
             Thread.sleep(2000);
-            LOG.info("wait catalog to be ready. FE type: {}. is ready: {}", this.feType, this.isReady.get());
+            LOG.info("wait catalog to be ready. FE type: {}. is ready: {}", feType, isReady.get());
         }
     }
 
     public boolean isReady() {
-        return this.isReady.get();
+        return isReady.get();
     }
 
     private void getClusterIdAndRole() throws IOException {
@@ -884,10 +884,10 @@ public class Catalog {
 
         // if helper node is point to self, or there is ROLE and VERSION file in local.
         // get the node type from local
-        if (this.isMyself() || (roleFile.exists() && versionFile.exists())) {
+        if (isMyself() || (roleFile.exists() && versionFile.exists())) {
 
-            if (!this.isMyself()) {
-                LOG.info("find ROLE and VERSION file in local, ignore helper nodes: {}", this.helperNodes);
+            if (!isMyself()) {
+                LOG.info("find ROLE and VERSION file in local, ignore helper nodes: {}", helperNodes);
             }
 
             // check file integrity, if has.
@@ -912,76 +912,76 @@ public class Catalog {
 
                 // For compatibility. Because this is the very first time to start, so we arbitrarily choose
                 // a new name for this node
-                this.role = FrontendNodeType.FOLLOWER;
-                this.nodeName = genFeNodeName(this.selfNode.first, this.selfNode.second, false /* new style */);
-                storage.writeFrontendRoleAndNodeName(this.role, this.nodeName);
-                LOG.info("very first time to start this node. role: {}, node name: {}", this.role.name(), this.nodeName);
+                role = FrontendNodeType.FOLLOWER;
+                nodeName = genFeNodeName(selfNode.first, selfNode.second, false /* new style */);
+                storage.writeFrontendRoleAndNodeName(role, nodeName);
+                LOG.info("very first time to start this node. role: {}, node name: {}", role.name(), nodeName);
             } else {
-                this.role = storage.getRole();
-                if (this.role == FrontendNodeType.REPLICA) {
+                role = storage.getRole();
+                if (role == FrontendNodeType.REPLICA) {
                     // for compatibility
-                    this.role = FrontendNodeType.FOLLOWER;
+                    role = FrontendNodeType.FOLLOWER;
                 }
 
-                this.nodeName = storage.getNodeName();
-                if (Strings.isNullOrEmpty(this.nodeName)) {
+                nodeName = storage.getNodeName();
+                if (Strings.isNullOrEmpty(nodeName)) {
                     // In normal case, if ROLE file exist, role and nodeName should both exist.
                     // But we will get a empty nodeName after upgrading.
                     // So for forward compatibility, we use the "old-style" way of naming: "ip_port",
                     // and update the ROLE file.
-                    this.nodeName = genFeNodeName(this.selfNode.first, this.selfNode.second, true/* old style */);
-                    storage.writeFrontendRoleAndNodeName(this.role, this.nodeName);
-                    LOG.info("forward compatibility. role: {}, node name: {}", this.role.name(), this.nodeName);
+                    nodeName = genFeNodeName(selfNode.first, selfNode.second, true/* old style */);
+                    storage.writeFrontendRoleAndNodeName(role, nodeName);
+                    LOG.info("forward compatibility. role: {}, node name: {}", role.name(), nodeName);
                 } else {
                     // nodeName should be like "192.168.1.1_9217_1620296111213"
                     // and the selfNode should be the prefix of nodeName.
                     // If not, it means that the ip used last time is different from this time, which is not allowed.
                     // But is metadata_failure_recovery is true, we will not check it because this may be a FE migration.
-                    String[] split = this.nodeName.split("_");
-                    if (Config.metadata_failure_recovery.equals("false") && !this.selfNode.first.equalsIgnoreCase(split[0])) {
-                        throw new IOException("the self host " + this.selfNode.first + " does not equal to the host in ROLE" +
+                    String[] split = nodeName.split("_");
+                    if (Config.metadata_failure_recovery.equals("false") && !selfNode.first.equalsIgnoreCase(split[0])) {
+                        throw new IOException("the self host " + selfNode.first + " does not equal to the host in ROLE" +
                                 " file " + split[0] + ". You need to set 'priority_networks' config in fe.conf to match" +
                                 " the host " + split[0]);
                     }
                 }
             }
 
-            Preconditions.checkNotNull(this.role);
-            Preconditions.checkNotNull(this.nodeName);
+            Preconditions.checkNotNull(role);
+            Preconditions.checkNotNull(nodeName);
 
             if (!versionFile.exists()) {
-                this.clusterId = Config.cluster_id == -1 ? Storage.newClusterID() : Config.cluster_id;
-                this.token = Strings.isNullOrEmpty(Config.auth_token) ?
+                clusterId = Config.cluster_id == -1 ? Storage.newClusterID() : Config.cluster_id;
+                token = Strings.isNullOrEmpty(Config.auth_token) ?
                         Storage.newToken() : Config.auth_token;
-                storage = new Storage(this.clusterId, this.token, this.imageDir);
+                storage = new Storage(clusterId, token, this.imageDir);
                 storage.writeClusterIdAndToken();
 
-                this.isFirstTimeStartUp = true;
-                Frontend self = new Frontend(this.role, this.nodeName, this.selfNode.first, this.selfNode.second);
+                isFirstTimeStartUp = true;
+                Frontend self = new Frontend(role, nodeName, selfNode.first, selfNode.second);
                 // We don't need to check if frontends already contains self.
                 // frontends must be empty cause no image is loaded and no journal is replayed yet.
                 // And this frontend will be persisted later after opening bdbje environment.
-                this.frontends.put(this.nodeName, self);
+                frontends.put(nodeName, self);
             } else {
-                this.clusterId = storage.getClusterID();
+                clusterId = storage.getClusterID();
                 if (storage.getToken() == null) {
-                    this.token = Strings.isNullOrEmpty(Config.auth_token) ?
+                    token = Strings.isNullOrEmpty(Config.auth_token) ?
                             Storage.newToken() : Config.auth_token;
-                    LOG.info("new token={}", this.token);
-                    storage.setToken(this.token);
+                    LOG.info("new token={}", token);
+                    storage.setToken(token);
                     storage.writeClusterIdAndToken();
                 } else {
-                    this.token = storage.getToken();
+                    token = storage.getToken();
                 }
-                this.isFirstTimeStartUp = false;
+                isFirstTimeStartUp = false;
             }
         } else {
             // try to get role and node name from helper node,
             // this loop will not end until we get certain role type and name
             while (true) {
-                if (!this.getFeNodeTypeAndNameFromHelpers()) {
+                if (!getFeNodeTypeAndNameFromHelpers()) {
                     LOG.warn("current node is not added to the group. please add it first. "
-                            + "sleep 5 seconds and retry, current helper nodes: {}", this.helperNodes);
+                            + "sleep 5 seconds and retry, current helper nodes: {}", helperNodes);
                     try {
                         Thread.sleep(5000);
                         continue;
@@ -991,43 +991,43 @@ public class Catalog {
                     }
                 }
 
-                if (this.role == FrontendNodeType.REPLICA) {
+                if (role == FrontendNodeType.REPLICA) {
                     // for compatibility
-                    this.role = FrontendNodeType.FOLLOWER;
+                    role = FrontendNodeType.FOLLOWER;
                 }
                 break;
             }
 
-            Preconditions.checkState(this.helperNodes.size() == 1);
-            Preconditions.checkNotNull(this.role);
-            Preconditions.checkNotNull(this.nodeName);
+            Preconditions.checkState(helperNodes.size() == 1);
+            Preconditions.checkNotNull(role);
+            Preconditions.checkNotNull(nodeName);
 
-            Pair<String, Integer> rightHelperNode = this.helperNodes.get(0);
+            Pair<String, Integer> rightHelperNode = helperNodes.get(0);
 
             Storage storage = new Storage(this.imageDir);
-            if (roleFile.exists() && (this.role != storage.getRole() || !this.nodeName.equals(storage.getNodeName()))
+            if (roleFile.exists() && (role != storage.getRole() || !nodeName.equals(storage.getNodeName()))
                     || !roleFile.exists()) {
-                storage.writeFrontendRoleAndNodeName(this.role, this.nodeName);
+                storage.writeFrontendRoleAndNodeName(role, nodeName);
             }
             if (!versionFile.exists()) {
                 // If the version file doesn't exist, download it from helper node
-                if (!this.getVersionFileFromHelper(rightHelperNode)) {
+                if (!getVersionFileFromHelper(rightHelperNode)) {
                     throw new IOException("fail to download version file from " + rightHelperNode.first + " will exit.");
                 }
 
                 // NOTE: cluster_id will be init when Storage object is constructed,
                 //       so we new one.
                 storage = new Storage(this.imageDir);
-                this.clusterId = storage.getClusterID();
-                this.token = storage.getToken();
-                if (Strings.isNullOrEmpty(this.token)) {
-                    this.token = Config.auth_token;
+                clusterId = storage.getClusterID();
+                token = storage.getToken();
+                if (Strings.isNullOrEmpty(token)) {
+                    token = Config.auth_token;
                 }
             } else {
                 // If the version file exist, read the cluster id and check the
                 // id with helper node to make sure they are identical
-                this.clusterId = storage.getClusterID();
-                this.token = storage.getToken();
+                clusterId = storage.getClusterID();
+                token = storage.getToken();
                 try {
                     URL idURL = new URL("http://" + rightHelperNode.first + ":" + Config.http_port + "/check");
                     HttpURLConnection conn = null;
@@ -1036,21 +1036,21 @@ public class Catalog {
                     conn.setReadTimeout(2 * 1000);
                     String clusterIdString = conn.getHeaderField(MetaBaseAction.CLUSTER_ID);
                     int remoteClusterId = Integer.parseInt(clusterIdString);
-                    if (remoteClusterId != this.clusterId) {
+                    if (remoteClusterId != clusterId) {
                         LOG.error("cluster id is not equal with helper node {}. will exit.", rightHelperNode.first);
                         System.exit(-1);
                     }
                     String remoteToken = conn.getHeaderField(MetaBaseAction.TOKEN);
-                    if (this.token == null && remoteToken != null) {
+                    if (token == null && remoteToken != null) {
                         LOG.info("get token from helper node. token={}.", remoteToken);
-                        this.token = remoteToken;
+                        token = remoteToken;
                         storage.writeClusterIdAndToken();
                         storage.reload();
                     }
                     if (Config.enable_token_check) {
-                        Preconditions.checkNotNull(this.token);
+                        Preconditions.checkNotNull(token);
                         Preconditions.checkNotNull(remoteToken);
-                        if (!this.token.equals(remoteToken)) {
+                        if (!token.equals(remoteToken)) {
                             throw new IOException("token is not equal with helper node " + rightHelperNode.first + ". will exit.");
                         }
                     }
@@ -1059,22 +1059,22 @@ public class Catalog {
                 }
             }
 
-            this.getNewImage(rightHelperNode);
+            getNewImage(rightHelperNode);
         }
 
-        if (Config.cluster_id != -1 && this.clusterId != Config.cluster_id) {
+        if (Config.cluster_id != -1 && clusterId != Config.cluster_id) {
             throw new IOException("cluster id is not equal with config item cluster_id. will exit.");
         }
 
-        if (this.role.equals(FrontendNodeType.FOLLOWER)) {
-            this.isElectable = true;
+        if (role.equals(FrontendNodeType.FOLLOWER)) {
+            isElectable = true;
         } else {
-            this.isElectable = false;
+            isElectable = false;
         }
 
-        Preconditions.checkState(this.helperNodes.size() == 1);
+        Preconditions.checkState(helperNodes.size() == 1);
         LOG.info("finished to get cluster id: {}, role: {} and node name: {}",
-                this.clusterId, this.role.name(), this.nodeName);
+                clusterId, role.name(), nodeName);
     }
 
     public static String genFeNodeName(String host, int port, boolean isOldStyle) {
@@ -1092,10 +1092,10 @@ public class Catalog {
         // we try to get info from helper nodes, once we get the right helper node,
         // other helper nodes will be ignored and removed.
         Pair<String, Integer> rightHelperNode = null;
-        for (Pair<String, Integer> helperNode : this.helperNodes) {
+        for (Pair<String, Integer> helperNode : helperNodes) {
             try {
                 URL url = new URL("http://" + helperNode.first + ":" + Config.http_port
-                        + "/role?host=" + this.selfNode.first + "&port=" + this.selfNode.second);
+                        + "/role?host=" + selfNode.first + "&port=" + selfNode.second);
                 HttpURLConnection conn = null;
                 conn = (HttpURLConnection) url.openConnection();
                 if (conn.getResponseCode() != 200) {
@@ -1109,27 +1109,27 @@ public class Catalog {
                     LOG.warn("failed to get fe node type from helper node: {}.", helperNode);
                     continue;
                 }
-                this.role = FrontendNodeType.valueOf(type);
-                this.nodeName = conn.getHeaderField("name");
+                role = FrontendNodeType.valueOf(type);
+                nodeName = conn.getHeaderField("name");
 
                 // get role and node name before checking them, because we want to throw any exception
                 // as early as we encounter.
 
-                if (this.role == FrontendNodeType.UNKNOWN) {
-                    LOG.warn("frontend {} is not added to cluster yet. role UNKNOWN", this.selfNode);
+                if (role == FrontendNodeType.UNKNOWN) {
+                    LOG.warn("frontend {} is not added to cluster yet. role UNKNOWN", selfNode);
                     return false;
                 }
 
-                if (Strings.isNullOrEmpty(this.nodeName)) {
+                if (Strings.isNullOrEmpty(nodeName)) {
                     // For forward compatibility, we use old-style name: "ip_port"
-                    this.nodeName = genFeNodeName(this.selfNode.first, this.selfNode.second, true /* old style */);
+                    nodeName = genFeNodeName(selfNode.first, selfNode.second, true /* old style */);
                 }
             } catch (Exception e) {
                 LOG.warn("failed to get fe node type from helper node: {}.", helperNode, e);
                 continue;
             }
 
-            LOG.info("get fe node type {}, name {} from {}:{}", this.role, this.nodeName, helperNode.first, Config.http_port);
+            LOG.info("get fe node type {}, name {} from {}:{}", role, nodeName, helperNode.first, Config.http_port);
             rightHelperNode = helperNode;
             break;
         }
@@ -1138,14 +1138,14 @@ public class Catalog {
             return false;
         }
 
-        this.helperNodes.clear();
-        this.helperNodes.add(rightHelperNode);
+        helperNodes.clear();
+        helperNodes.add(rightHelperNode);
         return true;
     }
 
     private void getSelfHostPort() {
-        this.selfNode = new Pair<String, Integer>(FrontendOptions.getLocalHostAddress(), Config.edit_log_port);
-        LOG.debug("get self node: {}", this.selfNode);
+        selfNode = new Pair<String, Integer>(FrontendOptions.getLocalHostAddress(), Config.edit_log_port);
+        LOG.debug("get self node: {}", selfNode);
     }
 
     private void getHelperNodes(String[] args) throws Exception {
@@ -1162,23 +1162,23 @@ public class Catalog {
 
         if (!Config.enable_deploy_manager.equalsIgnoreCase("disable")) {
             if (Config.enable_deploy_manager.equalsIgnoreCase("k8s")) {
-                this.deployManager = new K8sDeployManager(this, 5000 /* 5s interval */);
+                deployManager = new K8sDeployManager(this, 5000 /* 5s interval */);
             } else if (Config.enable_deploy_manager.equalsIgnoreCase("ambari")) {
-                this.deployManager = new AmbariDeployManager(this, 5000 /* 5s interval */);
+                deployManager = new AmbariDeployManager(this, 5000 /* 5s interval */);
             } else if (Config.enable_deploy_manager.equalsIgnoreCase("local")) {
-                this.deployManager = new LocalFileDeployManager(this, 5000 /* 5s interval */);
+                deployManager = new LocalFileDeployManager(this, 5000 /* 5s interval */);
             } else {
                 throw new AnalysisException("Unknow deploy manager: " + Config.enable_deploy_manager);
             }
 
-            this.getHelperNodeFromDeployManager();
+            getHelperNodeFromDeployManager();
 
         } else {
             if (helpers != null) {
                 String[] splittedHelpers = helpers.split(",");
                 for (String helper : splittedHelpers) {
                     Pair<String, Integer> helperHostPort = SystemInfoService.validateHostAndPort(helper);
-                    if (helperHostPort.equals(this.selfNode)) {
+                    if (helperHostPort.equals(selfNode)) {
                         /**
                          * If user specified the helper node to this FE itself,
                          * we will stop the starting FE process and report an error.
@@ -1192,20 +1192,20 @@ public class Catalog {
                                 "Do not specify the helper node to FE itself. "
                                         + "Please specify it to the existing running Master or Follower FE");
                     }
-                    this.helperNodes.add(helperHostPort);
+                    helperNodes.add(helperHostPort);
                 }
             } else {
                 // If helper node is not designated, use local node as helper node.
-                this.helperNodes.add(Pair.create(this.selfNode.first, Config.edit_log_port));
+                helperNodes.add(Pair.create(selfNode.first, Config.edit_log_port));
             }
         }
 
-        LOG.info("get helper nodes: {}", this.helperNodes);
+        LOG.info("get helper nodes: {}", helperNodes);
     }
 
     @SuppressWarnings("unchecked")
     private void getHelperNodeFromDeployManager() throws Exception {
-        Preconditions.checkNotNull(this.deployManager);
+        Preconditions.checkNotNull(deployManager);
 
         // 1. check if this is the first time to start up
         File roleFile = new File(this.imageDir, Storage.ROLE_FILE);
@@ -1220,71 +1220,71 @@ public class Catalog {
             // This is not the first time this node start up.
             // It should already added to FE group, just set helper node as it self.
             LOG.info("role file exist. this is not the first time to start up");
-            this.helperNodes = Lists.newArrayList(Pair.create(this.selfNode.first, Config.edit_log_port));
+            helperNodes = Lists.newArrayList(Pair.create(selfNode.first, Config.edit_log_port));
             return;
         }
 
         // This is the first time this node start up.
         // Get helper node from deploy manager.
-        this.helperNodes = this.deployManager.getHelperNodes();
-        if (this.helperNodes == null || this.helperNodes.isEmpty()) {
+        helperNodes = deployManager.getHelperNodes();
+        if (helperNodes == null || helperNodes.isEmpty()) {
             throw new Exception("failed to get helper node from deploy manager. exit");
         }
     }
 
     private void transferToMaster() {
         // stop replayer
-        if (this.replayer != null) {
-            this.replayer.exit();
+        if (replayer != null) {
+            replayer.exit();
             try {
-                this.replayer.join();
+                replayer.join();
             } catch (InterruptedException e) {
                 LOG.warn("got exception when stopping the replayer thread", e);
             }
-            this.replayer = null;
+            replayer = null;
         }
 
         // set this after replay thread stopped. to avoid replay thread modify them.
-        this.isReady.set(false);
-        this.canRead.set(false);
+        isReady.set(false);
+        canRead.set(false);
 
-        this.editLog.open();
+        editLog.open();
 
-        if (!this.haProtocol.fencing()) {
+        if (!haProtocol.fencing()) {
             LOG.error("fencing failed. will exit.");
             System.exit(-1);
         }
 
         long replayStartTime = System.currentTimeMillis();
         // replay journals. -1 means replay all the journals larger than current journal id.
-        this.replayJournal(-1);
+        replayJournal(-1);
         long replayEndTime = System.currentTimeMillis();
         LOG.info("finish replay in " + (replayEndTime - replayStartTime) + " msec");
 
-        this.checkCurrentNodeExist();
+        checkCurrentNodeExist();
 
-        this.editLog.rollEditLog();
+        editLog.rollEditLog();
 
         // Log meta_version
         long journalVersion = MetaContext.get().getMetaVersion();
         if (journalVersion < FeConstants.meta_version) {
-            this.editLog.logMetaVersion(FeConstants.meta_version);
+            editLog.logMetaVersion(FeConstants.meta_version);
             MetaContext.get().setMetaVersion(FeConstants.meta_version);
         }
 
         // Log the first frontend
-        if (this.isFirstTimeStartUp) {
+        if (isFirstTimeStartUp) {
             // if isFirstTimeStartUp is true, frontends must contains this Node.
-            Frontend self = this.frontends.get(this.nodeName);
+            Frontend self = frontends.get(nodeName);
             Preconditions.checkNotNull(self);
             // OP_ADD_FIRST_FRONTEND is emitted, so it can write to BDBJE even if canWrite is false
-            this.editLog.logAddFirstFrontend(self);
+            editLog.logAddFirstFrontend(self);
 
-            this.initLowerCaseTableNames();
+            initLowerCaseTableNames();
         }
 
-        if (!this.isDefaultClusterCreated) {
-            this.initDefaultCluster();
+        if (!isDefaultClusterCreated) {
+            initDefaultCluster();
         }
 
         // MUST set master ip before starting checkpoint thread.
@@ -1293,24 +1293,24 @@ public class Catalog {
         this.masterRpcPort = Config.rpc_port;
         this.masterHttpPort = Config.http_port;
         MasterInfo info = new MasterInfo(this.masterIp, this.masterHttpPort, this.masterRpcPort);
-        this.editLog.logMasterInfo(info);
+        editLog.logMasterInfo(info);
 
         // for master, the 'isReady' is set behind.
         // but we are sure that all metadata is replayed if we get here.
         // so no need to check 'isReady' flag in this method
-        this.fixBugAfterMetadataReplayed(false);
+        fixBugAfterMetadataReplayed(false);
 
         // start all daemon threads that only running on MASTER FE
-        this.startMasterOnlyDaemonThreads();
+        startMasterOnlyDaemonThreads();
         // start other daemon threads that should running on all FE
-        this.startNonMasterDaemonThreads();
+        startNonMasterDaemonThreads();
 
         MetricRepo.init();
 
-        this.canRead.set(true);
-        this.isReady.set(true);
+        canRead.set(true);
+        isReady.set(true);
 
-        this.checkLowerCaseTableNames();
+        checkLowerCaseTableNames();
 
         String msg = "master finished to replay journal, can write now.";
         Util.stdoutWithTime(msg);
@@ -1324,7 +1324,7 @@ public class Catalog {
      */
     public void fixBugAfterMetadataReplayed(boolean waitCatalogReady) {
         if (waitCatalogReady) {
-            while (!this.isReady()) {
+            while (!isReady()) {
                 try {
                     Thread.sleep(10 * 1000);
                 } catch (InterruptedException e) {
@@ -1337,94 +1337,91 @@ public class Catalog {
     // start all daemon threads only running on Master
     private void startMasterOnlyDaemonThreads() {
         // start checkpoint thread
-        this.checkpointer = new Checkpoint(this.editLog);
-        this.checkpointer.setMetaContext(this.metaContext);
+        checkpointer = new Checkpoint(editLog);
+        checkpointer.setMetaContext(metaContext);
         // set "checkpointThreadId" before the checkpoint thread start, because the thread
         // need to check the "checkpointThreadId" when running.
-        checkpointThreadId = this.checkpointer.getId();
+        checkpointThreadId = checkpointer.getId();
 
-        this.checkpointer.start();
+        checkpointer.start();
         LOG.info("checkpointer thread started. thread id is {}", checkpointThreadId);
 
         // heartbeat mgr
-        this.heartbeatMgr.setMaster(this.clusterId, this.token, this.epoch);
-        this.heartbeatMgr.start();
+        heartbeatMgr.setMaster(clusterId, token, epoch);
+        heartbeatMgr.start();
         // Load checker
         LoadChecker.init(Config.load_checker_interval_second * 1000L);
         LoadChecker.startAll();
         // New load scheduler
-        this.pendingLoadTaskScheduler.start();
-        this.loadingLoadTaskScheduler.start();
-        this.loadManager.prepareJobs();
-        this.loadJobScheduler.start();
-        this.loadEtlChecker.start();
-        this.loadLoadingChecker.start();
+        pendingLoadTaskScheduler.start();
+        loadingLoadTaskScheduler.start();
+        loadManager.prepareJobs();
+        loadJobScheduler.start();
+        loadEtlChecker.start();
+        loadLoadingChecker.start();
         // Export checker
         ExportChecker.init(Config.export_checker_interval_second * 1000L);
         ExportChecker.startAll();
         // Tablet checker and scheduler
-        this.tabletChecker.start();
-        this.tabletScheduler.start();
+        tabletChecker.start();
+        tabletScheduler.start();
         // Colocate tables checker and balancer
         ColocateTableCheckerAndBalancer.getInstance().start();
         // Publish Version Daemon
-        this.publishVersionDaemon.start();
+        publishVersionDaemon.start();
         // Start txn cleaner
-        this.txnCleaner.start();
+        txnCleaner.start();
         // Alter
-        this.getAlterInstance().start();
+        getAlterInstance().start();
         // Consistency checker
-        this.getConsistencyChecker().start();
+        getConsistencyChecker().start();
         // Backup handler
-        this.getBackupHandler().start();
+        getBackupHandler().start();
         // catalog recycle bin
-        this.getRecycleBin().start();
+        getRecycleBin().start();
         // time printer
-        this.createTimePrinter();
-        this.timePrinter.start();
+        createTimePrinter();
+        timePrinter.start();
         // deploy manager
         if (!Config.enable_deploy_manager.equalsIgnoreCase("disable")) {
-            LOG.info("deploy manager {} start", this.deployManager.getName());
-            this.deployManager.start();
+            LOG.info("deploy manager {} start", deployManager.getName());
+            deployManager.start();
         }
         // start routine load scheduler
-        this.routineLoadScheduler.start();
-        this.routineLoadTaskScheduler.start();
+        routineLoadScheduler.start();
+        routineLoadTaskScheduler.start();
         // start sync checker
-        this.syncChecker.start();
+        syncChecker.start();
         // start dynamic partition task
-        this.dynamicPartitionScheduler.start();
+        dynamicPartitionScheduler.start();
         // start daemon thread to update db used data quota for db txn manager periodically
-        this.dbUsedDataQuotaInfoCollector.start();
+        dbUsedDataQuotaInfoCollector.start();
         // start daemon thread to update global partition in memory information periodically
-        this.partitionInMemoryInfoCollector.start();
-        this.streamLoadRecordMgr.start();
-        this.icebergTableCreationRecordMgr.start();
-
-        this.statisticsJobScheduler.start();
-        this.statisticsTaskScheduler.start();
+        partitionInMemoryInfoCollector.start();
+        streamLoadRecordMgr.start();
+        icebergTableCreationRecordMgr.start();
     }
 
     // start threads that should running on all FE
     private void startNonMasterDaemonThreads() {
-        this.tabletStatMgr.start();
+        tabletStatMgr.start();
         // load and export job label cleaner thread
-        this.labelCleaner.start();
+        labelCleaner.start();
         // ES state store
-        this.esRepository.start();
+        esRepository.start();
         // domain resolver
-        this.domainResolver.start();
+        domainResolver.start();
     }
 
     private void transferToNonMaster(FrontendNodeType newType) {
-        this.isReady.set(false);
+        isReady.set(false);
 
-        if (this.feType == FrontendNodeType.OBSERVER || this.feType == FrontendNodeType.FOLLOWER) {
+        if (feType == FrontendNodeType.OBSERVER || feType == FrontendNodeType.FOLLOWER) {
             Preconditions.checkState(newType == FrontendNodeType.UNKNOWN);
-            LOG.warn("{} to UNKNOWN, still offer read service", this.feType.name());
+            LOG.warn("{} to UNKNOWN, still offer read service", feType.name());
             // not set canRead here, leave canRead as what is was.
             // if meta out of date, canRead will be set to false in replayer thread.
-            this.metaReplayState.setTransferToUnknown();
+            metaReplayState.setTransferToUnknown();
             return;
         }
 
@@ -1432,24 +1429,24 @@ public class Catalog {
 
         // add helper sockets
         if (Config.edit_log_type.equalsIgnoreCase("BDB")) {
-            for (Frontend fe : this.frontends.values()) {
+            for (Frontend fe : frontends.values()) {
                 if (fe.getRole() == FrontendNodeType.FOLLOWER || fe.getRole() == FrontendNodeType.REPLICA) {
-                    ((BDBHA) this.getHaProtocol()).addHelperSocket(fe.getHost(), fe.getEditLogPort());
+                    ((BDBHA) getHaProtocol()).addHelperSocket(fe.getHost(), fe.getEditLogPort());
                 }
             }
         }
 
-        if (this.replayer == null) {
-            this.createReplayer();
-            this.replayer.start();
+        if (replayer == null) {
+            createReplayer();
+            replayer.start();
         }
 
         // 'isReady' will be set to true in 'setCanRead()' method
-        this.fixBugAfterMetadataReplayed(true);
+        fixBugAfterMetadataReplayed(true);
 
-        this.checkLowerCaseTableNames();
+        checkLowerCaseTableNames();
 
-        this.startNonMasterDaemonThreads();
+        startNonMasterDaemonThreads();
 
         MetricRepo.init();
     }
@@ -1472,7 +1469,7 @@ public class Catalog {
     // After the cluster initialization is complete, 'lower_case_table_names' can not be modified during the cluster
     // restart or upgrade.
     private void checkLowerCaseTableNames() {
-        while (!this.isReady()) {
+        while (!isReady()) {
             // Waiting for lower_case_table_names to initialize value from image or editlog.
             try {
                 LOG.info("Waiting for \'lower_case_table_names\' initialization.");
@@ -1500,14 +1497,14 @@ public class Catalog {
             return;
         }
 
-        Frontend fe = this.checkFeExist(this.selfNode.first, this.selfNode.second);
+        Frontend fe = checkFeExist(selfNode.first, selfNode.second);
         if (fe == null) {
             LOG.error("current node {}:{} is not added to the cluster, will exit." +
                             " Your FE IP maybe changed, please set 'priority_networks' config in fe.conf properly.",
-                    this.selfNode.first, this.selfNode.second);
+                    selfNode.first, selfNode.second);
             System.exit(-1);
-        } else if (fe.getRole() != this.role) {
-            LOG.error("current node role is {} not match with frontend recorded role {}. will exit", this.role,
+        } else if (fe.getRole() != role) {
+            LOG.error("current node role is {} not match with frontend recorded role {}. will exit", role,
                     fe.getRole());
             System.exit(-1);
         }
@@ -1535,7 +1532,7 @@ public class Catalog {
 
         try {
             URL infoUrl = new URL("http://" + helperNode.first + ":" + Config.http_port + "/info");
-            StorageInfo info = this.getStorageInfo(infoUrl);
+            StorageInfo info = getStorageInfo(infoUrl);
             long version = info.getImageSeq();
             if (version > localImageVersion) {
                 String url = "http://" + helperNode.first + ":" + Config.http_port
@@ -1551,19 +1548,19 @@ public class Catalog {
     }
 
     private boolean isMyself() {
-        Preconditions.checkNotNull(this.selfNode);
-        Preconditions.checkNotNull(this.helperNodes);
-        LOG.debug("self: {}. helpers: {}", this.selfNode, this.helperNodes);
+        Preconditions.checkNotNull(selfNode);
+        Preconditions.checkNotNull(helperNodes);
+        LOG.debug("self: {}. helpers: {}", selfNode, helperNodes);
         // if helper nodes contain it self, remove other helpers
         boolean containSelf = false;
-        for (Pair<String, Integer> helperNode : this.helperNodes) {
-            if (this.selfNode.equals(helperNode)) {
+        for (Pair<String, Integer> helperNode : helperNodes) {
+            if (selfNode.equals(helperNode)) {
                 containSelf = true;
             }
         }
         if (containSelf) {
-            this.helperNodes.clear();
-            this.helperNodes.add(this.selfNode);
+            helperNodes.clear();
+            helperNodes.add(selfNode);
         }
 
         return containSelf;
@@ -1605,19 +1602,19 @@ public class Catalog {
     }
 
     public boolean hasReplayer() {
-        return this.replayer != null;
+        return replayer != null;
     }
 
     public void loadImage(String imageDir) throws IOException, DdlException {
         Storage storage = new Storage(imageDir);
-        this.clusterId = storage.getClusterID();
+        clusterId = storage.getClusterID();
         File curFile = storage.getCurrentImageFile();
         if (!curFile.exists()) {
             // image.0 may not exist
             LOG.info("image does not exist: {}", curFile.getAbsolutePath());
             return;
         }
-        this.replayedJournalId.set(storage.getImageSeq());
+        replayedJournalId.set(storage.getImageSeq());
         MetaReader.read(curFile, this);
     }
 
@@ -1651,10 +1648,6 @@ public class Catalog {
                             invertedIndex.addTablet(tabletId, tabletMeta);
                             for (Replica replica : tablet.getReplicas()) {
                                 invertedIndex.addReplica(tabletId, replica);
-                                if (MetaContext.get().getMetaVersion() < FeMetaVersion.VERSION_48) {
-                                    // set replica's schema hash
-                                    replica.setSchemaHash(schemaHash);
-                                }
                             }
                         }
                     } // end for indices
@@ -1666,7 +1659,7 @@ public class Catalog {
     public long loadHeader(DataInputStream dis, MetaHeader metaHeader, long checksum) throws IOException, DdlException {
         switch (metaHeader.getMetaFormat()) {
             case COR1:
-                return this.loadHeaderCOR1(dis, checksum);
+                return loadHeaderCOR1(dis, checksum);
             default:
                 throw new DdlException("unsupported image format.");
         }
@@ -1682,50 +1675,40 @@ public class Catalog {
 
         long catalogId = dis.readLong();
         newChecksum ^= catalogId;
-        this.idGenerator.setId(catalogId);
+        idGenerator.setId(catalogId);
 
-        if (journalVersion >= FeMetaVersion.VERSION_32) {
-            this.isDefaultClusterCreated = dis.readBoolean();
-        }
+        isDefaultClusterCreated = dis.readBoolean();
 
         LOG.info("finished replay header from image");
         return newChecksum;
     }
 
     public long loadMasterInfo(DataInputStream dis, long checksum) throws IOException {
-        this.masterIp = Text.readString(dis);
-        this.masterRpcPort = dis.readInt();
-        long newChecksum = checksum ^ this.masterRpcPort;
-        this.masterHttpPort = dis.readInt();
-        newChecksum ^= this.masterHttpPort;
+        masterIp = Text.readString(dis);
+        masterRpcPort = dis.readInt();
+        long newChecksum = checksum ^ masterRpcPort;
+        masterHttpPort = dis.readInt();
+        newChecksum ^= masterHttpPort;
 
         LOG.info("finished replay masterInfo from image");
         return newChecksum;
     }
 
     public long loadFrontends(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_22) {
-            int size = dis.readInt();
-            long newChecksum = checksum ^ size;
-            for (int i = 0; i < size; i++) {
-                Frontend fe = Frontend.read(dis);
-                this.replayAddFrontend(fe);
-            }
+        int size = dis.readInt();
+        long newChecksum = checksum ^ size;
+        for (int i = 0; i < size; i++) {
+            Frontend fe = Frontend.read(dis);
+            replayAddFrontend(fe);
+        }
 
-            size = dis.readInt();
-            newChecksum ^= size;
-            for (int i = 0; i < size; i++) {
-                if (Catalog.getCurrentCatalogJournalVersion() < FeMetaVersion.VERSION_41) {
-                    Frontend fe = Frontend.read(dis);
-                    this.removedFrontends.add(fe.getNodeName());
-                } else {
-                    this.removedFrontends.add(Text.readString(dis));
-                }
-            }
-            return newChecksum;
+        size = dis.readInt();
+        newChecksum ^= size;
+        for (int i = 0; i < size; i++) {
+            removedFrontends.add(Text.readString(dis));
         }
         LOG.info("finished replay frontends from image");
-        return checksum;
+        return newChecksum;
     }
 
     public long loadDb(DataInputStream dis, long checksum) throws IOException, DdlException {
@@ -1735,12 +1718,12 @@ public class Catalog {
             Database db = new Database();
             db.readFields(dis);
             newChecksum ^= db.getId();
-            this.idToDb.put(db.getId(), db);
-            this.fullNameToDb.put(db.getFullName(), db);
+            idToDb.put(db.getId(), db);
+            fullNameToDb.put(db.getFullName(), db);
             if (db.getDbState() == DbState.LINK) {
-                this.fullNameToDb.put(db.getAttachDb(), db);
+                fullNameToDb.put(db.getAttachDb(), db);
             }
-            this.globalTransactionMgr.addDatabaseTransactionMgr(db.getId());
+            globalTransactionMgr.addDatabaseTransactionMgr(db.getId());
         }
         LOG.info("finished replay databases from image");
         return newChecksum;
@@ -1765,33 +1748,27 @@ public class Catalog {
                 // LABEL_KEEP_MAX_MS
                 // This job must be FINISHED or CANCELLED
                 if (!job.isExpired(currentTimeMs)) {
-                    this.load.unprotectAddLoadJob(job, true /* replay */);
+                    load.unprotectAddLoadJob(job, true /* replay */);
                 }
             }
         }
 
         // delete jobs
         // Delete job has been moved to DeleteHandler. Here the jobSize is always 0, we need do nothing.
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_11) {
-            jobSize = dis.readInt();
-            Preconditions.checkState(jobSize == 0, jobSize);
-            newChecksum ^= jobSize;
-        }
+        jobSize = dis.readInt();
+        Preconditions.checkState(jobSize == 0, jobSize);
+        newChecksum ^= jobSize;
 
         // load error hub info
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_24) {
-            LoadErrorHub.Param param = new LoadErrorHub.Param();
-            param.readFields(dis);
-            this.load.setLoadErrorHubInfo(param);
-        }
+        LoadErrorHub.Param param = new LoadErrorHub.Param();
+        param.readFields(dis);
+        load.setLoadErrorHubInfo(param);
 
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_45) {
-            // 4. load delete jobs
-            // Delete job has been moved to DeleteHandler. Here the jobSize is always 0, we need do nothing.
-            int deleteJobSize = dis.readInt();
-            Preconditions.checkState(deleteJobSize == 0, deleteJobSize);
-            newChecksum ^= deleteJobSize;
-        }
+        // 4. load delete jobs
+        // Delete job has been moved to DeleteHandler. Here the jobSize is always 0, we need do nothing.
+        int deleteJobSize = dis.readInt();
+        Preconditions.checkState(deleteJobSize == 0, deleteJobSize);
+        newChecksum ^= deleteJobSize;
 
         LOG.info("finished replay loadJob from image");
         return newChecksum;
@@ -1800,16 +1777,14 @@ public class Catalog {
     public long loadExportJob(DataInputStream dis, long checksum) throws IOException, DdlException {
         long curTime = System.currentTimeMillis();
         long newChecksum = checksum;
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_32) {
-            int size = dis.readInt();
-            newChecksum = checksum ^ size;
-            for (int i = 0; i < size; ++i) {
-                long jobId = dis.readLong();
-                newChecksum ^= jobId;
-                ExportJob job = ExportJob.read(dis);
-                if (!job.isExpired(curTime)) {
-                    this.exportMgr.unprotectAddJob(job);
-                }
+        int size = dis.readInt();
+        newChecksum = checksum ^ size;
+        for (int i = 0; i < size; ++i) {
+            long jobId = dis.readLong();
+            newChecksum ^= jobId;
+            ExportJob job = ExportJob.read(dis);
+            if (!job.isExpired(curTime)) {
+                exportMgr.unprotectAddJob(job);
             }
         }
         LOG.info("finished replay exportJob from image");
@@ -1818,7 +1793,7 @@ public class Catalog {
 
     public long loadSyncJobs(DataInputStream dis, long checksum) throws IOException, DdlException {
         if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_103) {
-            this.syncJobManager.readField(dis);
+            syncJobManager.readField(dis);
         }
         LOG.info("finished replay syncJobMgr from image");
         return checksum;
@@ -1827,7 +1802,7 @@ public class Catalog {
     public long loadAlterJob(DataInputStream dis, long checksum) throws IOException {
         long newChecksum = checksum;
         for (JobType type : JobType.values()) {
-            newChecksum = this.loadAlterJob(dis, newChecksum, type);
+            newChecksum = loadAlterJob(dis, newChecksum, type);
         }
         LOG.info("finished replay alterJob from image");
         return newChecksum;
@@ -1854,27 +1829,25 @@ public class Catalog {
         }
 
         // alter job v2
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_61) {
-            size = dis.readInt();
-            newChecksum ^= size;
-            for (int i = 0; i < size; i++) {
-                AlterJobV2 alterJobV2 = AlterJobV2.read(dis);
-                if (type == JobType.ROLLUP || type == JobType.SCHEMA_CHANGE) {
-                    if (type == JobType.ROLLUP) {
-                        this.getRollupHandler().addAlterJobV2(alterJobV2);
-                    } else {
-                        alterJobsV2.put(alterJobV2.getJobId(), alterJobV2);
-                    }
-                    // ATTN : we just want to add tablet into TabletInvertedIndex when only PendingJob is checkpointed
-                    // to prevent TabletInvertedIndex data loss,
-                    // So just use AlterJob.replay() instead of AlterHandler.replay().
-                    if (alterJobV2.getJobState() == AlterJobV2.JobState.PENDING) {
-                        alterJobV2.replay(alterJobV2);
-                        LOG.info("replay pending alter job when load alter job {} ", alterJobV2.getJobId());
-                    }
+        size = dis.readInt();
+        newChecksum ^= size;
+        for (int i = 0; i < size; i++) {
+            AlterJobV2 alterJobV2 = AlterJobV2.read(dis);
+            if (type == JobType.ROLLUP || type == JobType.SCHEMA_CHANGE) {
+                if (type == JobType.ROLLUP) {
+                    this.getRollupHandler().addAlterJobV2(alterJobV2);
                 } else {
                     alterJobsV2.put(alterJobV2.getJobId(), alterJobV2);
                 }
+                // ATTN : we just want to add tablet into TabletInvertedIndex when only PendingJob is checkpointed
+                // to prevent TabletInvertedIndex data loss,
+                // So just use AlterJob.replay() instead of AlterHandler.replay().
+                if (alterJobV2.getJobState() == AlterJobV2.JobState.PENDING) {
+                    alterJobV2.replay(alterJobV2);
+                    LOG.info("replay pending alter job when load alter job {} ", alterJobV2.getJobId());
+                }
+            } else {
+                alterJobsV2.put(alterJobV2.getJobId(), alterJobV2);
             }
         }
 
@@ -1882,54 +1855,43 @@ public class Catalog {
     }
 
     public long loadBackupHandler(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_42) {
-            this.getBackupHandler().readFields(dis);
-        }
-        this.getBackupHandler().setCatalog(this);
+        getBackupHandler().readFields(dis);
+        getBackupHandler().setCatalog(this);
         LOG.info("finished replay backupHandler from image");
         return checksum;
     }
 
     public long loadDeleteHandler(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_82) {
-            this.deleteHandler = DeleteHandler.read(dis);
-        }
+        this.deleteHandler = DeleteHandler.read(dis);
         LOG.info("finished replay deleteHandler from image");
         return checksum;
     }
 
     public long loadPaloAuth(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_43) {
-            // CAN NOT use PaloAuth.read(), cause this auth instance is already passed to DomainResolver
-            this.auth.readFields(dis);
-        }
+        // CAN NOT use PaloAuth.read(), cause this auth instance is already passed to DomainResolver
+        auth.readFields(dis);
         LOG.info("finished replay paloAuth from image");
         return checksum;
     }
 
     public long loadTransactionState(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_45) {
-            int size = dis.readInt();
-            long newChecksum = checksum ^ size;
-            this.globalTransactionMgr.readFields(dis);
-            LOG.info("finished replay transactionState from image");
-            return newChecksum;
-        }
-        return checksum;
+        int size = dis.readInt();
+        long newChecksum = checksum ^ size;
+        globalTransactionMgr.readFields(dis);
+        LOG.info("finished replay transactionState from image");
+        return newChecksum;
     }
 
     public long loadRecycleBin(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_10) {
-            this.recycleBin.readFields(dis);
-            if (!isCheckpointThread()) {
-                // add tablet in Recycle bin to TabletInvertedIndex
-                this.recycleBin.addTabletToInvertedIndex();
-            }
-            // create DatabaseTransactionMgr for db in recycle bin.
-            // these dbs do not exist in `idToDb` of the catalog.
-            for (Long dbId : this.recycleBin.getAllDbIds()) {
-                this.globalTransactionMgr.addDatabaseTransactionMgr(dbId);
-            }
+        recycleBin.readFields(dis);
+        if (!isCheckpointThread()) {
+            // add tablet in Recycle bin to TabletInvertedIndex
+            recycleBin.addTabletToInvertedIndex();
+        }
+        // create DatabaseTransactionMgr for db in recycle bin.
+        // these dbs do not exist in `idToDb` of the catalog.
+        for (Long dbId : recycleBin.getAllDbIds()) {
+            globalTransactionMgr.addDatabaseTransactionMgr(dbId);
         }
         LOG.info("finished replay recycleBin from image");
         return checksum;
@@ -1937,56 +1899,44 @@ public class Catalog {
 
     // global variable persistence
     public long loadGlobalVariable(DataInputStream in, long checksum) throws IOException, DdlException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_22) {
-            VariableMgr.read(in);
-        }
+        VariableMgr.read(in);
         LOG.info("finished replay globalVariable from image");
         return checksum;
     }
 
     public long loadColocateTableIndex(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_46) {
-            Catalog.getCurrentColocateIndex().readFields(dis);
-        }
+        Catalog.getCurrentColocateIndex().readFields(dis);
         LOG.info("finished replay colocateTableIndex from image");
         return checksum;
     }
 
     public long loadRoutineLoadJobs(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_49) {
-            Catalog.getCurrentCatalog().getRoutineLoadManager().readFields(dis);
-        }
+        Catalog.getCurrentCatalog().getRoutineLoadManager().readFields(dis);
         LOG.info("finished replay routineLoadJobs from image");
         return checksum;
     }
 
     public long loadLoadJobsV2(DataInputStream in, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_50) {
-            this.loadManager.readFields(in);
-        }
+        loadManager.readFields(in);
         LOG.info("finished replay loadJobsV2 from image");
         return checksum;
     }
 
     public long loadResources(DataInputStream in, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_87) {
-            this.resourceMgr = ResourceMgr.read(in);
-        }
+        resourceMgr = ResourceMgr.read(in);
         LOG.info("finished replay resources from image");
         return checksum;
     }
 
     public long loadSmallFiles(DataInputStream in, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_52) {
-            this.smallFileMgr.readFields(in);
-        }
+        smallFileMgr.readFields(in);
         LOG.info("finished replay smallFiles from image");
         return checksum;
     }
 
     public long loadSqlBlockRule(DataInputStream in, long checksum) throws IOException {
         if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_104) {
-            this.sqlBlockRuleMgr = SqlBlockRuleMgr.read(in);
+            sqlBlockRuleMgr = SqlBlockRuleMgr.read(in);
         }
         LOG.info("finished replay sqlBlockRule from image");
         return checksum;
@@ -1996,9 +1946,9 @@ public class Catalog {
     public void saveImage() throws IOException {
         // Write image.ckpt
         Storage storage = new Storage(this.imageDir);
-        File curFile = storage.getImageFile(this.replayedJournalId.get());
+        File curFile = storage.getImageFile(replayedJournalId.get());
         File ckpt = new File(this.imageDir, Storage.IMAGE_NEW);
-        this.saveImage(ckpt, this.replayedJournalId.get());
+        saveImage(ckpt, replayedJournalId.get());
 
         // Move image.ckpt to image.dataVersion
         LOG.info("Move " + ckpt.getAbsolutePath() + " to " + curFile.getAbsolutePath());
@@ -2025,41 +1975,41 @@ public class Catalog {
         dos.writeLong(replayedJournalId);
 
         // Write id
-        long id = this.idGenerator.getBatchEndId();
+        long id = idGenerator.getBatchEndId();
         checksum ^= id;
         dos.writeLong(id);
 
-        dos.writeBoolean(this.isDefaultClusterCreated);
+        dos.writeBoolean(isDefaultClusterCreated);
 
         return checksum;
     }
 
     public long saveMasterInfo(CountingDataOutputStream dos, long checksum) throws IOException {
-        Text.writeString(dos, this.masterIp);
+        Text.writeString(dos, masterIp);
 
-        checksum ^= this.masterRpcPort;
-        dos.writeInt(this.masterRpcPort);
+        checksum ^= masterRpcPort;
+        dos.writeInt(masterRpcPort);
 
-        checksum ^= this.masterHttpPort;
-        dos.writeInt(this.masterHttpPort);
+        checksum ^= masterHttpPort;
+        dos.writeInt(masterHttpPort);
 
         return checksum;
     }
 
     public long saveFrontends(CountingDataOutputStream dos, long checksum) throws IOException {
-        int size = this.frontends.size();
+        int size = frontends.size();
         checksum ^= size;
 
         dos.writeInt(size);
-        for (Frontend fe : this.frontends.values()) {
+        for (Frontend fe : frontends.values()) {
             fe.write(dos);
         }
 
-        size = this.removedFrontends.size();
+        size = removedFrontends.size();
         checksum ^= size;
 
         dos.writeInt(size);
-        for (String feName : this.removedFrontends) {
+        for (String feName : removedFrontends) {
             Text.writeString(dos, feName);
         }
 
@@ -2067,10 +2017,10 @@ public class Catalog {
     }
 
     public long saveDb(CountingDataOutputStream dos, long checksum) throws IOException {
-        int dbCount = this.idToDb.size() - this.nameToCluster.keySet().size();
+        int dbCount = idToDb.size() - nameToCluster.keySet().size();
         checksum ^= dbCount;
         dos.writeInt(dbCount);
-        for (Map.Entry<Long, Database> entry : this.idToDb.entrySet()) {
+        for (Map.Entry<Long, Database> entry : idToDb.entrySet()) {
             Database db = entry.getValue();
             String dbName = db.getFullName();
             // Don't write information_schema db meta
@@ -2084,7 +2034,7 @@ public class Catalog {
 
     public long saveLoadJob(CountingDataOutputStream dos, long checksum) throws IOException {
         // 1. save load.dbToLoadJob
-        Map<Long, List<LoadJob>> dbToLoadJob = this.load.getDbToLoadJobs();
+        Map<Long, List<LoadJob>> dbToLoadJob = load.getDbToLoadJobs();
         int jobSize = dbToLoadJob.size();
         checksum ^= jobSize;
         dos.writeInt(jobSize);
@@ -2109,7 +2059,7 @@ public class Catalog {
         dos.writeInt(jobSize);
 
         // 3. load error hub info
-        LoadErrorHub.Param param = this.load.getLoadErrorHubInfo();
+        LoadErrorHub.Param param = load.getLoadErrorHubInfo();
         param.write(dos);
 
         // 4. save delete load job info
@@ -2123,7 +2073,7 @@ public class Catalog {
 
     public long saveExportJob(CountingDataOutputStream dos, long checksum) throws IOException {
         long curTime = System.currentTimeMillis();
-        List<ExportJob> jobs = this.exportMgr.getJobs().stream().filter(t -> !t.isExpired(curTime)).collect(Collectors.toList());
+        List<ExportJob> jobs = exportMgr.getJobs().stream().filter(t -> !t.isExpired(curTime)).collect(Collectors.toList());
         int size = jobs.size();
         checksum ^= size;
         dos.writeInt(size);
@@ -2137,13 +2087,13 @@ public class Catalog {
     }
 
     public long saveSyncJobs(CountingDataOutputStream dos, long checksum) throws IOException {
-        this.syncJobManager.write(dos);
+        syncJobManager.write(dos);
         return checksum;
     }
 
     public long saveAlterJob(CountingDataOutputStream dos, long checksum) throws IOException {
         for (JobType type : JobType.values()) {
-            checksum = this.saveAlterJob(dos, checksum, type);
+            checksum = saveAlterJob(dos, checksum, type);
         }
         return checksum;
     }
@@ -2175,25 +2125,25 @@ public class Catalog {
     }
 
     public long saveBackupHandler(CountingDataOutputStream dos, long checksum) throws IOException {
-        this.getBackupHandler().write(dos);
+        getBackupHandler().write(dos);
         return checksum;
     }
 
     public long saveDeleteHandler(CountingDataOutputStream dos, long checksum) throws IOException {
-        this.getDeleteHandler().write(dos);
+        getDeleteHandler().write(dos);
         return checksum;
     }
 
     public long savePaloAuth(CountingDataOutputStream dos, long checksum) throws IOException {
-        this.auth.write(dos);
+        auth.write(dos);
         return checksum;
     }
 
     public long saveTransactionState(CountingDataOutputStream dos, long checksum) throws IOException {
-        int size = this.globalTransactionMgr.getTransactionNum();
+        int size = globalTransactionMgr.getTransactionNum();
         checksum ^= size;
         dos.writeInt(size);
-        this.globalTransactionMgr.write(dos);
+        globalTransactionMgr.write(dos);
         return checksum;
     }
 
@@ -2233,7 +2183,7 @@ public class Catalog {
     }
 
     public long saveSmallFiles(CountingDataOutputStream dos, long checksum) throws IOException {
-        this.smallFileMgr.write(dos);
+        smallFileMgr.write(dos);
         return checksum;
     }
 
@@ -2243,35 +2193,35 @@ public class Catalog {
     }
 
     public void createLabelCleaner() {
-        this.labelCleaner = new MasterDaemon("LoadLabelCleaner", Config.label_clean_interval_second * 1000L) {
+        labelCleaner = new MasterDaemon("LoadLabelCleaner", Config.label_clean_interval_second * 1000L) {
             @Override
             protected void runAfterCatalogReady() {
-                Catalog.this.load.removeOldLoadJobs();
-                Catalog.this.loadManager.removeOldLoadJob();
-                Catalog.this.exportMgr.removeOldExportJobs();
-                Catalog.this.deleteHandler.removeOldDeleteInfos();
+                load.removeOldLoadJobs();
+                loadManager.removeOldLoadJob();
+                exportMgr.removeOldExportJobs();
+                deleteHandler.removeOldDeleteInfos();
             }
         };
     }
 
     public void createTxnCleaner() {
-        this.txnCleaner = new MasterDaemon("txnCleaner", Config.transaction_clean_interval_second * 1000L) {
+        txnCleaner = new MasterDaemon("txnCleaner", Config.transaction_clean_interval_second * 1000L) {
             @Override
             protected void runAfterCatalogReady() {
-                Catalog.this.globalTransactionMgr.removeExpiredAndTimeoutTxns();
+                globalTransactionMgr.removeExpiredAndTimeoutTxns();
             }
         };
     }
 
     public void createReplayer() {
-        this.replayer = new Daemon("replayer", REPLAY_INTERVAL_MS) {
+        replayer = new Daemon("replayer", REPLAY_INTERVAL_MS) {
             @Override
             protected void runOneCycle() {
                 boolean err = false;
                 boolean hasLog = false;
                 try {
-                    hasLog = Catalog.this.replayJournal(-1);
-                    Catalog.this.metaReplayState.setOk();
+                    hasLog = replayJournal(-1);
+                    metaReplayState.setOk();
                 } catch (InsufficientLogException insufficientLogEx) {
                     // Copy the missing log files from a member of the
                     // replication group who owns the files
@@ -2283,7 +2233,7 @@ public class Catalog {
                     System.exit(-1);
                 } catch (Throwable e) {
                     LOG.error("replayer thread catch an exception when replay journal.", e);
-                    Catalog.this.metaReplayState.setException(e);
+                    metaReplayState.setException(e);
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e1) {
@@ -2292,41 +2242,41 @@ public class Catalog {
                     err = true;
                 }
 
-                Catalog.this.setCanRead(hasLog, err);
+                setCanRead(hasLog, err);
             }
         };
-        this.replayer.setMetaContext(this.metaContext);
+        replayer.setMetaContext(metaContext);
     }
 
     private void setCanRead(boolean hasLog, boolean err) {
         if (err) {
-            this.canRead.set(false);
-            this.isReady.set(false);
+            canRead.set(false);
+            isReady.set(false);
             return;
         }
 
         if (Config.ignore_meta_check) {
             // can still offer read, but is not ready
-            this.canRead.set(true);
-            this.isReady.set(false);
+            canRead.set(true);
+            isReady.set(false);
             return;
         }
 
         long currentTimeMs = System.currentTimeMillis();
-        if (currentTimeMs - this.synchronizedTimeMs > Config.meta_delay_toleration_second * 1000) {
+        if (currentTimeMs - synchronizedTimeMs > Config.meta_delay_toleration_second * 1000) {
             // we still need this log to observe this situation
             // but service may be continued when there is no log being replayed.
             LOG.warn("meta out of date. current time: {}, synchronized time: {}, has log: {}, fe type: {}",
-                    currentTimeMs, this.synchronizedTimeMs, hasLog, this.feType);
-            if (hasLog || this.feType == FrontendNodeType.UNKNOWN) {
+                    currentTimeMs, synchronizedTimeMs, hasLog, feType);
+            if (hasLog || feType == FrontendNodeType.UNKNOWN) {
                 // 1. if we read log from BDB, which means master is still alive.
                 // So we need to set meta out of date.
                 // 2. if we didn't read any log from BDB and feType is UNKNOWN,
                 // which means this non-master node is disconnected with master.
                 // So we need to set meta out of date either.
-                this.metaReplayState.setOutOfDate(currentTimeMs, this.synchronizedTimeMs);
-                this.canRead.set(false);
-                this.isReady.set(false);
+                metaReplayState.setOutOfDate(currentTimeMs, synchronizedTimeMs);
+                canRead.set(false);
+                isReady.set(false);
             }
 
             // sleep 5s to avoid numerous 'meta out of date' log
@@ -2337,8 +2287,8 @@ public class Catalog {
             }
 
         } else {
-            this.canRead.set(true);
-            this.isReady.set(true);
+            canRead.set(true);
+            isReady.set(true);
         }
     }
 
@@ -2354,22 +2304,22 @@ public class Catalog {
     }
 
     public void createStateListener() {
-        this.listener = new Daemon("stateListener", STATE_CHANGE_CHECK_INTERVAL_MS) {
+        listener = new Daemon("stateListener", STATE_CHANGE_CHECK_INTERVAL_MS) {
             @Override
             protected synchronized void runOneCycle() {
 
                 while (true) {
                     FrontendNodeType newType = null;
                     try {
-                        newType = Catalog.this.typeTransferQueue.take();
+                        newType = typeTransferQueue.take();
                     } catch (InterruptedException e) {
                         LOG.error("got exception when take FE type from queue", e);
                         Util.stdoutWithTime("got exception when take FE type from queue. " + e.getMessage());
                         System.exit(-1);
                     }
                     Preconditions.checkNotNull(newType);
-                    LOG.info("begin to transfer FE type from {} to {}", Catalog.this.feType, newType);
-                    if (Catalog.this.feType == newType) {
+                    LOG.info("begin to transfer FE type from {} to {}", feType, newType);
+                    if (feType == newType) {
                         return;
                     }
 
@@ -2381,16 +2331,16 @@ public class Catalog {
                      * FOLLOWER -> MASTER: transferToMaster
                      * FOLLOWER/OBSERVER -> INIT/UNKNOWN: set isReady to false
                      */
-                    switch (Catalog.this.feType) {
+                    switch (feType) {
                         case INIT: {
                             switch (newType) {
                                 case MASTER: {
-                                    Catalog.this.transferToMaster();
+                                    transferToMaster();
                                     break;
                                 }
                                 case FOLLOWER:
                                 case OBSERVER: {
-                                    Catalog.this.transferToNonMaster(newType);
+                                    transferToNonMaster(newType);
                                     break;
                                 }
                                 case UNKNOWN:
@@ -2403,12 +2353,12 @@ public class Catalog {
                         case UNKNOWN: {
                             switch (newType) {
                                 case MASTER: {
-                                    Catalog.this.transferToMaster();
+                                    transferToMaster();
                                     break;
                                 }
                                 case FOLLOWER:
                                 case OBSERVER: {
-                                    Catalog.this.transferToNonMaster(newType);
+                                    transferToNonMaster(newType);
                                     break;
                                 }
                                 default:
@@ -2419,11 +2369,11 @@ public class Catalog {
                         case FOLLOWER: {
                             switch (newType) {
                                 case MASTER: {
-                                    Catalog.this.transferToMaster();
+                                    transferToMaster();
                                     break;
                                 }
                                 case UNKNOWN: {
-                                    Catalog.this.transferToNonMaster(newType);
+                                    transferToNonMaster(newType);
                                     break;
                                 }
                                 default:
@@ -2434,7 +2384,7 @@ public class Catalog {
                         case OBSERVER: {
                             switch (newType) {
                                 case UNKNOWN: {
-                                    Catalog.this.transferToNonMaster(newType);
+                                    transferToNonMaster(newType);
                                     break;
                                 }
                                 default:
@@ -2453,28 +2403,28 @@ public class Catalog {
                             break;
                     } // end switch formerFeType
 
-                    Catalog.this.feType = newType;
-                    LOG.info("finished to transfer FE type to {}", Catalog.this.feType);
+                    feType = newType;
+                    LOG.info("finished to transfer FE type to {}", feType);
                 }
             } // end runOneCycle
         };
 
-        this.listener.setMetaContext(this.metaContext);
+        listener.setMetaContext(metaContext);
     }
 
     public synchronized boolean replayJournal(long toJournalId) {
         long newToJournalId = toJournalId;
         if (newToJournalId == -1) {
-            newToJournalId = this.getMaxJournalId();
+            newToJournalId = getMaxJournalId();
         }
-        if (newToJournalId <= this.replayedJournalId.get()) {
+        if (newToJournalId <= replayedJournalId.get()) {
             return false;
         }
 
-        LOG.info("replayed journal id is {}, replay to journal id is {}", this.replayedJournalId, newToJournalId);
-        JournalCursor cursor = this.editLog.read(this.replayedJournalId.get() + 1, newToJournalId);
+        LOG.info("replayed journal id is {}, replay to journal id is {}", replayedJournalId, newToJournalId);
+        JournalCursor cursor = editLog.read(replayedJournalId.get() + 1, newToJournalId);
         if (cursor == null) {
-            LOG.warn("failed to get cursor from {} to {}", this.replayedJournalId.get() + 1, newToJournalId);
+            LOG.warn("failed to get cursor from {} to {}", replayedJournalId.get() + 1, newToJournalId);
             return false;
         }
 
@@ -2487,10 +2437,10 @@ public class Catalog {
             }
             hasLog = true;
             EditLog.loadJournal(this, entity);
-            this.replayedJournalId.incrementAndGet();
-            LOG.debug("journal {} replayed.", this.replayedJournalId);
-            if (this.feType != FrontendNodeType.MASTER) {
-                this.journalObservable.notifyObservers(this.replayedJournalId.get());
+            replayedJournalId.incrementAndGet();
+            LOG.debug("journal {} replayed.", replayedJournalId);
+            if (feType != FrontendNodeType.MASTER) {
+                journalObservable.notifyObservers(replayedJournalId.get());
             }
             if (MetricRepo.isInit) {
                 // Metric repo may not init after this replay thread start
@@ -2499,7 +2449,7 @@ public class Catalog {
         }
         long cost = System.currentTimeMillis() - startTime;
         if (cost >= 1000) {
-            LOG.warn("replay journal cost too much time: {} replayedJournalId: {}", cost, this.replayedJournalId);
+            LOG.warn("replay journal cost too much time: {} replayedJournalId: {}", cost, replayedJournalId);
         }
 
         return hasLog;
@@ -2507,73 +2457,73 @@ public class Catalog {
 
     public void createTimePrinter() {
         // time printer will write timestamp edit log every 10 seconds
-        this.timePrinter = new MasterDaemon("timePrinter", 10 * 1000L) {
+        timePrinter = new MasterDaemon("timePrinter", 10 * 1000L) {
             @Override
             protected void runAfterCatalogReady() {
                 Timestamp stamp = new Timestamp();
-                Catalog.this.editLog.logTimestamp(stamp);
+                editLog.logTimestamp(stamp);
             }
         };
     }
 
     public void addFrontend(FrontendNodeType role, String host, int editLogPort) throws DdlException {
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            Frontend fe = this.checkFeExist(host, editLogPort);
+            Frontend fe = checkFeExist(host, editLogPort);
             if (fe != null) {
                 throw new DdlException("frontend already exists " + fe);
             }
 
             String nodeName = genFeNodeName(host, editLogPort, false /* new name style */);
 
-            if (this.removedFrontends.contains(nodeName)) {
+            if (removedFrontends.contains(nodeName)) {
                 throw new DdlException("frontend name already exists " + nodeName + ". Try again");
             }
 
             fe = new Frontend(role, nodeName, host, editLogPort);
-            this.frontends.put(nodeName, fe);
+            frontends.put(nodeName, fe);
             if (role == FrontendNodeType.FOLLOWER || role == FrontendNodeType.REPLICA) {
-                ((BDBHA) this.getHaProtocol()).addHelperSocket(host, editLogPort);
-                this.helperNodes.add(Pair.create(host, editLogPort));
+                ((BDBHA) getHaProtocol()).addHelperSocket(host, editLogPort);
+                helperNodes.add(Pair.create(host, editLogPort));
             }
-            this.editLog.logAddFrontend(fe);
+            editLog.logAddFrontend(fe);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
     public void dropFrontend(FrontendNodeType role, String host, int port) throws DdlException {
-        if (host.equals(this.selfNode.first) && port == this.selfNode.second && this.feType == FrontendNodeType.MASTER) {
+        if (host.equals(selfNode.first) && port == selfNode.second && feType == FrontendNodeType.MASTER) {
             throw new DdlException("can not drop current master node.");
         }
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            Frontend fe = this.checkFeExist(host, port);
+            Frontend fe = checkFeExist(host, port);
             if (fe == null) {
                 throw new DdlException("frontend does not exist[" + host + ":" + port + "]");
             }
             if (fe.getRole() != role) {
                 throw new DdlException(role.toString() + " does not exist[" + host + ":" + port + "]");
             }
-            this.frontends.remove(fe.getNodeName());
-            this.removedFrontends.add(fe.getNodeName());
+            frontends.remove(fe.getNodeName());
+            removedFrontends.add(fe.getNodeName());
 
             if (fe.getRole() == FrontendNodeType.FOLLOWER || fe.getRole() == FrontendNodeType.REPLICA) {
-                this.haProtocol.removeElectableNode(fe.getNodeName());
-                this.helperNodes.remove(Pair.create(host, port));
+                haProtocol.removeElectableNode(fe.getNodeName());
+                helperNodes.remove(Pair.create(host, port));
             }
-            this.editLog.logRemoveFrontend(fe);
+            editLog.logRemoveFrontend(fe);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
     public Frontend checkFeExist(String host, int port) {
-        for (Frontend fe : this.frontends.values()) {
+        for (Frontend fe : frontends.values()) {
             if (fe.getHost().equals(host) && fe.getEditLogPort() == port) {
                 return fe;
             }
@@ -2582,7 +2532,7 @@ public class Catalog {
     }
 
     public Frontend getFeByHost(String host) {
-        for (Frontend fe : this.frontends.values()) {
+        for (Frontend fe : frontends.values()) {
             if (fe.getHost().equals(host)) {
                 return fe;
             }
@@ -2591,7 +2541,7 @@ public class Catalog {
     }
 
     public Frontend getFeByName(String name) {
-        for (Frontend fe : this.frontends.values()) {
+        for (Frontend fe : frontends.values()) {
             if (fe.getNodeName().equals(name)) {
                 return fe;
             }
@@ -2606,20 +2556,20 @@ public class Catalog {
         String fullDbName = stmt.getFullDbName();
         Map<String, String> properties = stmt.getProperties();
 
-        long id = this.getNextId();
+        long id = getNextId();
         Database db = new Database(id, fullDbName);
         db.setClusterName(clusterName);
         // check and analyze database properties before create database
         db.setDbProperties(new DatabaseProperty(properties).checkAndBuildProperties());
 
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            if (!this.nameToCluster.containsKey(clusterName)) {
+            if (!nameToCluster.containsKey(clusterName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_NO_SELECT_CLUSTER, clusterName);
             }
-            if (this.fullNameToDb.containsKey(fullDbName)) {
+            if (fullNameToDb.containsKey(fullDbName)) {
                 if (stmt.isSetIfNotExists()) {
                     LOG.info("create database[{}] which already exists", fullDbName);
                     return;
@@ -2627,41 +2577,41 @@ public class Catalog {
                     ErrorReport.reportDdlException(ErrorCode.ERR_DB_CREATE_EXISTS, fullDbName);
                 }
             } else {
-                this.unprotectCreateDb(db);
-                this.editLog.logCreateDb(db);
+                unprotectCreateDb(db);
+                editLog.logCreateDb(db);
             }
         } finally {
-            this.unlock();
+            unlock();
         }
         LOG.info("createDb dbName = " + fullDbName + ", id = " + id);
 
         // create tables in iceberg database
         if (db.getDbProperties().getIcebergProperty().isExist()) {
-            this.icebergTableCreationRecordMgr.registerDb(db);
+            icebergTableCreationRecordMgr.registerDb(db);
         }
     }
 
     // For replay edit log, need't lock metadata
     public void unprotectCreateDb(Database db) {
-        this.idToDb.put(db.getId(), db);
-        this.fullNameToDb.put(db.getFullName(), db);
-        final Cluster cluster = this.nameToCluster.get(db.getClusterName());
+        idToDb.put(db.getId(), db);
+        fullNameToDb.put(db.getFullName(), db);
+        final Cluster cluster = nameToCluster.get(db.getClusterName());
         cluster.addDb(db.getFullName(), db.getId());
-        this.globalTransactionMgr.addDatabaseTransactionMgr(db.getId());
+        globalTransactionMgr.addDatabaseTransactionMgr(db.getId());
     }
 
     // for test
     public void addCluster(Cluster cluster) {
-        this.nameToCluster.put(cluster.getName(), cluster);
-        this.idToCluster.put(cluster.getId(), cluster);
+        nameToCluster.put(cluster.getName(), cluster);
+        idToCluster.put(cluster.getId(), cluster);
     }
 
     public void replayCreateDb(Database db) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            this.unprotectCreateDb(db);
+            unprotectCreateDb(db);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -2669,11 +2619,11 @@ public class Catalog {
         String dbName = stmt.getDbName();
 
         // 1. check if database exists
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            if (!this.fullNameToDb.containsKey(dbName)) {
+            if (!fullNameToDb.containsKey(dbName)) {
                 if (stmt.isSetIfExists()) {
                     LOG.info("drop database[{}] which does not exist", dbName);
                     return;
@@ -2696,10 +2646,10 @@ public class Catalog {
                 if (db.getDbState() == DbState.LINK && dbName.equals(db.getAttachDb())) {
                     // We try to drop a hard link.
                     final DropLinkDbAndUpdateDbInfo info = new DropLinkDbAndUpdateDbInfo();
-                    this.fullNameToDb.remove(db.getAttachDb());
+                    fullNameToDb.remove(db.getAttachDb());
                     db.setDbState(DbState.NORMAL);
                     info.setUpdateDbState(DbState.NORMAL);
-                    final Cluster cluster = this.nameToCluster
+                    final Cluster cluster = nameToCluster
                             .get(ClusterNamespace.getClusterNameFromFullName(db.getAttachDb()));
                     final BaseParam param = new BaseParam();
                     param.addStringParam(db.getAttachDb());
@@ -2708,7 +2658,7 @@ public class Catalog {
                     info.setDropDbCluster(cluster.getName());
                     info.setDropDbId(db.getId());
                     info.setDropDbName(db.getAttachDb());
-                    this.editLog.logDropLinkDb(info);
+                    editLog.logDropLinkDb(info);
                     return;
                 }
 
@@ -2743,7 +2693,7 @@ public class Catalog {
                             }
                         }
                     }
-                    this.unprotectDropDb(db, stmt.isForceDrop(), false);
+                    unprotectDropDb(db, stmt.isForceDrop(), false);
                 } finally {
                     MetaLockUtils.writeUnlockTables(tableList);
                 }
@@ -2758,14 +2708,14 @@ public class Catalog {
             }
 
             // 3. remove db from catalog
-            this.idToDb.remove(db.getId());
-            this.fullNameToDb.remove(db.getFullName());
-            final Cluster cluster = this.nameToCluster.get(db.getClusterName());
+            idToDb.remove(db.getId());
+            fullNameToDb.remove(db.getFullName());
+            final Cluster cluster = nameToCluster.get(db.getClusterName());
             cluster.removeDb(dbName, db.getId());
             DropDbInfo info = new DropDbInfo(dbName, stmt.isForceDrop());
-            this.editLog.logDropDb(info);
+            editLog.logDropDb(info);
         } finally {
-            this.unlock();
+            unlock();
         }
 
         LOG.info("finish drop database[{}], is force : {}", dbName, stmt.isForceDrop());
@@ -2774,41 +2724,41 @@ public class Catalog {
     public void unprotectDropDb(Database db, boolean isForeDrop, boolean isReplay) {
         // drop Iceberg database table creation records
         if (db.getDbProperties().getIcebergProperty().isExist()) {
-            this.icebergTableCreationRecordMgr.deregisterDb(db);
+            icebergTableCreationRecordMgr.deregisterDb(db);
         }
         for (Table table : db.getTables()) {
-            this.unprotectDropTable(db, table, isForeDrop, isReplay);
+            unprotectDropTable(db, table, isForeDrop, isReplay);
         }
         db.markDropped();
     }
 
     public void replayDropLinkDb(DropLinkDbAndUpdateDbInfo info) {
-        this.tryLock(true);
+        tryLock(true);
         try {
             final Database db = this.fullNameToDb.remove(info.getDropDbName());
             db.setDbState(info.getUpdateDbState());
-            final Cluster cluster = this.nameToCluster
+            final Cluster cluster = nameToCluster
                     .get(info.getDropDbCluster());
             final BaseParam param = new BaseParam();
             param.addStringParam(db.getAttachDb());
             param.addLongParam(db.getId());
             cluster.removeLinkDb(param);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
     public void replayDropDb(String dbName, boolean isForceDrop) throws DdlException {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            Database db = this.fullNameToDb.get(dbName);
+            Database db = fullNameToDb.get(dbName);
             db.writeLock();
             try {
                 Set<String> tableNames = db.getTableNamesWithLock();
                 List<Table> tableList = db.getTablesOnIdOrder();
                 MetaLockUtils.writeLockTables(tableList);
                 try {
-                    this.unprotectDropDb(db, isForceDrop, true);
+                    unprotectDropDb(db, isForceDrop, true);
                 } finally {
                     MetaLockUtils.writeUnlockTables(tableList);
                 }
@@ -2821,50 +2771,50 @@ public class Catalog {
                 db.writeUnlock();
             }
 
-            this.fullNameToDb.remove(dbName);
-            this.idToDb.remove(db.getId());
-            final Cluster cluster = this.nameToCluster.get(db.getClusterName());
+            fullNameToDb.remove(dbName);
+            idToDb.remove(db.getId());
+            final Cluster cluster = nameToCluster.get(db.getClusterName());
             cluster.removeDb(dbName, db.getId());
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
     public void recoverDatabase(RecoverDbStmt recoverStmt) throws DdlException {
         // check is new db with same name already exist
-        if (this.getDb(recoverStmt.getDbName()).isPresent()) {
+        if (getDb(recoverStmt.getDbName()).isPresent()) {
             throw new DdlException("Database[" + recoverStmt.getDbName() + "] already exist.");
         }
 
         Database db = Catalog.getCurrentRecycleBin().recoverDatabase(recoverStmt.getDbName());
 
         // add db to catalog
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         db.writeLock();
         List<Table> tableList = db.getTablesOnIdOrder();
         MetaLockUtils.writeLockTables(tableList);
         try {
-            if (this.fullNameToDb.containsKey(db.getFullName())) {
+            if (fullNameToDb.containsKey(db.getFullName())) {
                 throw new DdlException("Database[" + db.getFullName() + "] already exist.");
                 // it's ok that we do not put db back to CatalogRecycleBin
                 // cause this db cannot recover any more
             }
 
-            this.fullNameToDb.put(db.getFullName(), db);
-            this.idToDb.put(db.getId(), db);
-            final Cluster cluster = this.nameToCluster.get(db.getClusterName());
+            fullNameToDb.put(db.getFullName(), db);
+            idToDb.put(db.getId(), db);
+            final Cluster cluster = nameToCluster.get(db.getClusterName());
             cluster.addDb(db.getFullName(), db.getId());
 
             // log
             RecoverInfo recoverInfo = new RecoverInfo(db.getId(), -1L, -1L);
-            this.editLog.logRecoverDb(recoverInfo);
+            editLog.logRecoverDb(recoverInfo);
             db.unmarkDropped();
         } finally {
             MetaLockUtils.writeUnlockTables(tableList);
             db.writeUnlock();
-            this.unlock();
+            unlock();
         }
 
         LOG.info("recover database[{}]", db.getId());
@@ -2916,7 +2866,7 @@ public class Catalog {
         Database db = Catalog.getCurrentRecycleBin().replayRecoverDatabase(dbId);
 
         // add db to catalog
-        this.replayCreateDb(db);
+        replayCreateDb(db);
 
         LOG.info("replay recover db[{}]", dbId);
     }
@@ -2934,7 +2884,7 @@ public class Catalog {
             }
             long quota = stmt.getQuota();
             DatabaseInfo dbInfo = new DatabaseInfo(dbName, "", quota, quotaType);
-            this.editLog.logAlterDb(dbInfo);
+            editLog.logAlterDb(dbInfo);
         } finally {
             db.writeUnlock();
         }
@@ -2965,16 +2915,16 @@ public class Catalog {
 
         Database db = null;
         Cluster cluster = null;
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            cluster = this.nameToCluster.get(clusterName);
+            cluster = nameToCluster.get(clusterName);
             if (cluster == null) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_NO_EXISTS, clusterName);
             }
             // check if db exists
-            db = this.fullNameToDb.get(fullDbName);
+            db = fullNameToDb.get(fullDbName);
             if (db == null) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_BAD_DB_ERROR, fullDbName);
             }
@@ -2983,7 +2933,7 @@ public class Catalog {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_RENAME_DB_ERR, fullDbName);
             }
             // check if name is already used
-            if (this.fullNameToDb.get(newFullDbName) != null) {
+            if (fullNameToDb.get(newFullDbName) != null) {
                 throw new DdlException("Database name[" + newFullDbName + "] is already used");
             }
 
@@ -2993,30 +2943,30 @@ public class Catalog {
             db.setNameWithLock(newFullDbName);
 
             // 2. add to meta. check again
-            this.fullNameToDb.remove(fullDbName);
-            this.fullNameToDb.put(newFullDbName, db);
+            fullNameToDb.remove(fullDbName);
+            fullNameToDb.put(newFullDbName, db);
 
             DatabaseInfo dbInfo = new DatabaseInfo(fullDbName, newFullDbName, -1L, QuotaType.NONE);
-            this.editLog.logDatabaseRename(dbInfo);
+            editLog.logDatabaseRename(dbInfo);
         } finally {
-            this.unlock();
+            unlock();
         }
 
         LOG.info("rename database[{}] to [{}]", fullDbName, newFullDbName);
     }
 
     public void replayRenameDatabase(String dbName, String newDbName) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            Database db = this.fullNameToDb.get(dbName);
-            Cluster cluster = this.nameToCluster.get(db.getClusterName());
+            Database db = fullNameToDb.get(dbName);
+            Cluster cluster = nameToCluster.get(db.getClusterName());
             cluster.removeDb(db.getFullName(), db.getId());
             db.setName(newDbName);
             cluster.addDb(newDbName, db.getId());
-            this.fullNameToDb.remove(dbName);
-            this.fullNameToDb.put(newDbName, db);
+            fullNameToDb.remove(dbName);
+            fullNameToDb.put(newDbName, db);
         } finally {
-            this.unlock();
+            unlock();
         }
 
         LOG.info("replay rename database {} to {}", dbName, newDbName);
@@ -3067,22 +3017,22 @@ public class Catalog {
         }
 
         if (engineName.equals("olap")) {
-            this.createOlapTable(db, stmt);
+            createOlapTable(db, stmt);
             return;
         } else if (engineName.equals("odbc")) {
-            this.createOdbcTable(db, stmt);
+            createOdbcTable(db, stmt);
             return;
         } else if (engineName.equals("mysql")) {
-            this.createMysqlTable(db, stmt);
+            createMysqlTable(db, stmt);
             return;
         } else if (engineName.equals("broker")) {
-            this.createBrokerTable(db, stmt);
+            createBrokerTable(db, stmt);
             return;
         } else if (engineName.equalsIgnoreCase("elasticsearch") || engineName.equalsIgnoreCase("es")) {
-            this.createEsTable(db, stmt);
+            createEsTable(db, stmt);
             return;
         } else if (engineName.equalsIgnoreCase("hive")) {
-            this.createHiveTable(db, stmt);
+            createHiveTable(db, stmt);
             return;
         } else if (engineName.equalsIgnoreCase("iceberg")) {
             IcebergCatalogMgr.createIcebergTable(db, stmt);
@@ -3128,7 +3078,7 @@ public class Catalog {
             CreateTableStmt parsedCreateTableStmt = (CreateTableStmt) SqlParserUtils.parseAndAnalyzeStmt(createTableStmt.get(0), ConnectContext.get());
             parsedCreateTableStmt.setTableName(stmt.getTableName());
             parsedCreateTableStmt.setIfNotExists(stmt.isIfNotExists());
-            this.createTable(parsedCreateTableStmt);
+            createTable(parsedCreateTableStmt);
         } catch (UserException e) {
             throw new DdlException("Failed to execute CREATE TABLE LIKE " + stmt.getExistedTableName() + ". Reason: " + e.getMessage());
         }
@@ -3176,7 +3126,7 @@ public class Catalog {
             }
             Analyzer dummyRootAnalyzer = new Analyzer(this, ConnectContext.get());
             createTableStmt.analyze(dummyRootAnalyzer);
-            this.createTable(createTableStmt);
+            createTable(createTableStmt);
         } catch (UserException e) {
             throw new DdlException("Failed to execute CREATE TABLE AS SELECT Reason: " + e.getMessage());
         }
@@ -3265,7 +3215,7 @@ public class Catalog {
             // check colocation
             if (Catalog.getCurrentColocateIndex().isColocateTable(olapTable.getId())) {
                 String fullGroupName = db.getId() + "_" + olapTable.getColocateGroup();
-                ColocateGroupSchema groupSchema = this.colocateTableIndex.getGroupSchema(fullGroupName);
+                ColocateGroupSchema groupSchema = colocateTableIndex.getGroupSchema(fullGroupName);
                 Preconditions.checkNotNull(groupSchema);
                 groupSchema.checkDistribution(distributionInfo);
                 groupSchema.checkReplicaAllocation(singlePartitionDesc.getReplicaAlloc());
@@ -3298,8 +3248,8 @@ public class Catalog {
         }
         Set<Long> tabletIdSet = new HashSet<Long>();
         try {
-            long partitionId = this.getNextId();
-            Partition partition = this.createPartitionWithIndices(db.getClusterName(), db.getId(),
+            long partitionId = getNextId();
+            Partition partition = createPartitionWithIndices(db.getClusterName(), db.getId(),
                     olapTable.getId(),
                     olapTable.getBaseIndexId(),
                     partitionId, partitionName,
@@ -3393,7 +3343,7 @@ public class Catalog {
                             partitionInfo.getIsInMemory(partitionId),
                             isTempPartition);
                 }
-                this.editLog.logAddPartition(info);
+                editLog.logAddPartition(info);
 
                 LOG.info("succeed in creating partition[{}], temp: {}", partitionId, isTempPartition);
             } finally {
@@ -3495,7 +3445,7 @@ public class Catalog {
 
         // log
         DropPartitionInfo info = new DropPartitionInfo(db.getId(), olapTable.getId(), partitionName, isTempPartition, clause.isForceDrop());
-        this.editLog.logDropPartition(info);
+        editLog.logDropPartition(info);
 
         LOG.info("succeed in dropping partition[{}], is temp : {}, is force : {}", partitionName, isTempPartition, clause.isForceDrop());
     }
@@ -3536,7 +3486,7 @@ public class Catalog {
                                                  DistributionInfo distributionInfo,
                                                  TStorageMedium storageMedium,
                                                  ReplicaAllocation replicaAlloc,
-                                                 Pair<Long, Long> versionInfo,
+                                                 Long versionInfo,
                                                  Set<String> bfColumns,
                                                  double bfFpp,
                                                  Set<Long> tabletIdSet,
@@ -3568,10 +3518,9 @@ public class Catalog {
 
         // version and version hash
         if (versionInfo != null) {
-            partition.updateVisibleVersionAndVersionHash(versionInfo.first, versionInfo.second);
+            partition.updateVisibleVersion(versionInfo);
         }
         long version = partition.getVisibleVersion();
-        long versionHash = partition.getVisibleVersionHash();
 
         short totalReplicaNum = replicaAlloc.getTotalReplicaNum();
         for (Map.Entry<Long, MaterializedIndex> entry : indexMap.entrySet()) {
@@ -3582,7 +3531,7 @@ public class Catalog {
             // create tablets
             int schemaHash = indexMeta.getSchemaHash();
             TabletMeta tabletMeta = new TabletMeta(dbId, tableId, partitionId, indexId, schemaHash, storageMedium);
-            this.createTablets(clusterName, index, ReplicaState.NORMAL, distributionInfo, version, versionHash,
+            createTablets(clusterName, index, ReplicaState.NORMAL, distributionInfo, version,
                     replicaAlloc, tabletMeta, tabletIdSet);
 
             boolean ok = false;
@@ -3604,7 +3553,7 @@ public class Catalog {
                     CreateReplicaTask task = new CreateReplicaTask(backendId, dbId, tableId,
                             partitionId, indexId, tabletId,
                             shortKeyColumnCount, schemaHash,
-                            version, versionHash,
+                            version,
                             keysType,
                             storageType, storageMedium,
                             schema, bfColumns, bfFpp,
@@ -3666,7 +3615,7 @@ public class Catalog {
 
         // create columns
         List<Column> baseSchema = stmt.getColumns();
-        this.validateColumns(baseSchema);
+        validateColumns(baseSchema);
 
         // create partition info
         PartitionDesc partitionDesc = stmt.getPartitionDesc();
@@ -3676,7 +3625,7 @@ public class Catalog {
             // gen partition id first
             PartitionDesc partDesc = partitionDesc;
             for (SinglePartitionDesc desc : partDesc.getSinglePartitionDescs()) {
-                long partitionId = this.getNextId();
+                long partitionId = getNextId();
                 partitionNameToId.put(desc.getPartitionName(), partitionId);
             }
             partitionInfo = partitionDesc.toPartitionInfo(baseSchema, partitionNameToId, false);
@@ -3684,7 +3633,7 @@ public class Catalog {
             if (DynamicPartitionUtil.checkDynamicPartitionPropertiesExist(stmt.getProperties())) {
                 throw new DdlException("Only support dynamic partition properties on range partition table");
             }
-            long partitionId = this.getNextId();
+            long partitionId = getNextId();
             // use table name as single partition name
             partitionNameToId.put(tableName, partitionId);
             partitionInfo = new SinglePartitionInfo();
@@ -3714,7 +3663,7 @@ public class Catalog {
         olapTable.setComment(stmt.getComment());
 
         // set base index id
-        long baseIndexId = this.getNextId();
+        long baseIndexId = getNextId();
         olapTable.setBaseIndexId(baseIndexId);
 
         // set base index info to table
@@ -3798,14 +3747,17 @@ public class Catalog {
         try {
             String colocateGroup = PropertyAnalyzer.analyzeColocate(properties);
             if (colocateGroup != null) {
+                if (defaultDistributionInfo.getType() == DistributionInfoType.RANDOM) {
+                    throw new AnalysisException("Random distribution for colocate table is unsupported");
+                }
                 String fullGroupName = db.getId() + "_" + colocateGroup;
-                ColocateGroupSchema groupSchema = this.colocateTableIndex.getGroupSchema(fullGroupName);
+                ColocateGroupSchema groupSchema = colocateTableIndex.getGroupSchema(fullGroupName);
                 if (groupSchema != null) {
                     // group already exist, check if this table can be added to this group
                     groupSchema.checkColocateSchema(olapTable);
                 }
                 // add table to this group, if group does not exist, create a new one
-                this.getColocateTableIndex().addTableToGroup(db.getId(), olapTable, colocateGroup,
+                getColocateTableIndex().addTableToGroup(db.getId(), olapTable, colocateGroup,
                         null /* generate group id inside */);
                 olapTable.setColocateGroup(colocateGroup);
             }
@@ -3846,7 +3798,7 @@ public class Catalog {
             }
             Preconditions.checkNotNull(rollupIndexStorageType);
             // set rollup index meta to olap table
-            List<Column> rollupColumns = this.getRollupHandler().checkAndPrepareMaterializedView(addRollupClause,
+            List<Column> rollupColumns = getRollupHandler().checkAndPrepareMaterializedView(addRollupClause,
                     olapTable, baseRollupIndex, false);
             short rollupShortKeyColumnCount = Catalog.calcShortKeyColumnCount(rollupColumns, alterClause.getProperties());
             int rollupSchemaHash = Util.generateSchemaHash();
@@ -3867,7 +3819,7 @@ public class Catalog {
         }
 
         // analyze version info
-        Pair<Long, Long> versionInfo = null;
+        Long versionInfo = null;
         try {
             versionInfo = PropertyAnalyzer.analyzeVersionInfo(properties);
         } catch (AnalysisException e) {
@@ -3898,7 +3850,7 @@ public class Catalog {
                             + " of replica exceeds quota[" + db.getReplicaQuota() + "]");
                 }
                 // create partition
-                Partition partition = this.createPartitionWithIndices(db.getClusterName(), db.getId(),
+                Partition partition = createPartitionWithIndices(db.getClusterName(), db.getId(),
                         olapTable.getId(), olapTable.getBaseIndexId(),
                         partitionId, partitionName,
                         olapTable.getIndexIdToMeta(),
@@ -3950,7 +3902,7 @@ public class Catalog {
                 for (Map.Entry<String, Long> entry : partitionNameToId.entrySet()) {
                     DataProperty dataProperty = partitionInfo.getDataProperty(entry.getValue());
                     DistributionInfo partitionDistributionInfo = distributionDesc.toDistributionInfo(baseSchema);
-                    Partition partition = this.createPartitionWithIndices(db.getClusterName(), db.getId(), olapTable.getId(),
+                    Partition partition = createPartitionWithIndices(db.getClusterName(), db.getId(), olapTable.getId(),
                             olapTable.getBaseIndexId(), entry.getValue(), entry.getKey(),
                             olapTable.getIndexIdToMeta(), partitionDistributionInfo,
                             dataProperty.getStorageMedium(),
@@ -3971,10 +3923,10 @@ public class Catalog {
             }
 
             if (result.second) {
-                if (this.getColocateTableIndex().isColocateTable(tableId)) {
+                if (getColocateTableIndex().isColocateTable(tableId)) {
                     // if this is a colocate join table, its table id is already added to colocate group
                     // so we should remove the tableId here
-                    this.getColocateTableIndex().removeTable(tableId);
+                    getColocateTableIndex().removeTable(tableId);
                 }
                 for (Long tabletId : tabletIdSet) {
                     Catalog.getCurrentInvertedIndex().deleteTablet(tabletId);
@@ -3982,16 +3934,16 @@ public class Catalog {
                 LOG.info("duplicate create table[{};{}], skip next steps", tableName, tableId);
             } else {
                 // we have added these index to memory, only need to persist here
-                if (this.getColocateTableIndex().isColocateTable(tableId)) {
-                    GroupId groupId = this.getColocateTableIndex().getGroup(tableId);
-                    Map<Tag, List<List<Long>>> backendsPerBucketSeq = this.getColocateTableIndex().getBackendsPerBucketSeq(groupId);
+                if (getColocateTableIndex().isColocateTable(tableId)) {
+                    GroupId groupId = getColocateTableIndex().getGroup(tableId);
+                    Map<Tag, List<List<Long>>> backendsPerBucketSeq = getColocateTableIndex().getBackendsPerBucketSeq(groupId);
                     ColocatePersistInfo info = ColocatePersistInfo.createForAddTable(groupId, tableId, backendsPerBucketSeq);
-                    this.editLog.logColocateAddTable(info);
+                    editLog.logColocateAddTable(info);
                 }
                 LOG.info("successfully create table[{};{}]", tableName, tableId);
                 // register or remove table from DynamicPartition after table created
                 DynamicPartitionUtil.registerOrRemoveDynamicPartitionTable(db.getId(), olapTable, false);
-                this.dynamicPartitionScheduler.createOrUpdateRuntimeInfo(
+                dynamicPartitionScheduler.createOrUpdateRuntimeInfo(
                         tableId, DynamicPartitionScheduler.LAST_UPDATE_TIME, TimeUtils.getCurrentFormatTime());
             }
         } catch (DdlException e) {
@@ -3999,8 +3951,8 @@ public class Catalog {
                 Catalog.getCurrentInvertedIndex().deleteTablet(tabletId);
             }
             // only remove from memory, because we have not persist it
-            if (this.getColocateTableIndex().isColocateTable(tableId)) {
-                this.getColocateTableIndex().removeTable(tableId);
+            if (getColocateTableIndex().isColocateTable(tableId)) {
+                getColocateTableIndex().removeTable(tableId);
             }
 
             throw e;
@@ -4041,7 +3993,7 @@ public class Catalog {
 
         // create columns
         List<Column> baseSchema = stmt.getColumns();
-        this.validateColumns(baseSchema);
+        validateColumns(baseSchema);
 
         // create partition info
         PartitionDesc partitionDesc = stmt.getPartitionDesc();
@@ -4050,7 +4002,7 @@ public class Catalog {
         if (partitionDesc != null) {
             partitionInfo = partitionDesc.toPartitionInfo(baseSchema, partitionNameToId, false);
         } else {
-            long partitionId = this.getNextId();
+            long partitionId = getNextId();
             // use table name as single partition name
             partitionNameToId.put(tableName, partitionId);
             partitionInfo = new SinglePartitionInfo();
@@ -4088,7 +4040,7 @@ public class Catalog {
     private void createHiveTable(Database db, CreateTableStmt stmt) throws DdlException {
         String tableName = stmt.getTableName();
         List<Column> columns = stmt.getColumns();
-        long tableId = this.getNextId();
+        long tableId = getNextId();
         HiveTable hiveTable = new HiveTable(tableId, tableName, columns, stmt.getProperties());
         hiveTable.setComment(stmt.getComment());
         // check hive table whether exists in hive database
@@ -4259,7 +4211,7 @@ public class Catalog {
                     Preconditions.checkState(partitionId.size() == 1);
                     partition = olapTable.getPartition(partitionId.get(0));
                 }
-                sb.append(Joiner.on(",").join(partition.getVisibleVersion(), partition.getVisibleVersionHash()))
+                sb.append(partition.getVisibleVersion())
                         .append("\"");
             }
 
@@ -4435,7 +4387,7 @@ public class Catalog {
                         sb.append(")");
                     }
                     sb.append("(\"version_info\" = \"");
-                    sb.append(Joiner.on(",").join(partition.getVisibleVersion(), partition.getVisibleVersionHash()))
+                    sb.append(partition.getVisibleVersion())
                             .append("\"");
                     sb.append(");");
                     addPartitionStmt.add(sb.toString());
@@ -4518,81 +4470,76 @@ public class Catalog {
     }
 
     private void createTablets(String clusterName, MaterializedIndex index, ReplicaState replicaState,
-                               DistributionInfo distributionInfo, long version, long versionHash, ReplicaAllocation replicaAlloc,
+                               DistributionInfo distributionInfo, long version, ReplicaAllocation replicaAlloc,
                                TabletMeta tabletMeta, Set<Long> tabletIdSet) throws DdlException {
-        DistributionInfoType distributionInfoType = distributionInfo.getType();
-        if (distributionInfoType == DistributionInfoType.HASH) {
-            ColocateTableIndex colocateIndex = Catalog.getCurrentColocateIndex();
-            Map<Tag, List<List<Long>>> backendsPerBucketSeq = null;
-            GroupId groupId = null;
-            if (colocateIndex.isColocateTable(tabletMeta.getTableId())) {
-                // if this is a colocate table, try to get backend seqs from colocation index.
-                groupId = colocateIndex.getGroup(tabletMeta.getTableId());
-                backendsPerBucketSeq = colocateIndex.getBackendsPerBucketSeq(groupId);
+        ColocateTableIndex colocateIndex = Catalog.getCurrentColocateIndex();
+        Map<Tag, List<List<Long>>> backendsPerBucketSeq = null;
+        GroupId groupId = null;
+        if (colocateIndex.isColocateTable(tabletMeta.getTableId())) {
+            if (distributionInfo.getType() == DistributionInfoType.RANDOM) {
+                throw new DdlException("Random distribution for colocate table is unsupported");
             }
+            // if this is a colocate table, try to get backend seqs from colocation index.
+            groupId = colocateIndex.getGroup(tabletMeta.getTableId());
+            backendsPerBucketSeq = colocateIndex.getBackendsPerBucketSeq(groupId);
+        }
 
-            // chooseBackendsArbitrary is true, means this may be the first table of colocation group,
-            // or this is just a normal table, and we can choose backends arbitrary.
-            // otherwise, backends should be chosen from backendsPerBucketSeq;
-            boolean chooseBackendsArbitrary = backendsPerBucketSeq == null || backendsPerBucketSeq.isEmpty();
+        // chooseBackendsArbitrary is true, means this may be the first table of colocation group,
+        // or this is just a normal table, and we can choose backends arbitrary.
+        // otherwise, backends should be chosen from backendsPerBucketSeq;
+        boolean chooseBackendsArbitrary = backendsPerBucketSeq == null || backendsPerBucketSeq.isEmpty();
+        if (chooseBackendsArbitrary) {
+            backendsPerBucketSeq = Maps.newHashMap();
+        }
+        for (int i = 0; i < distributionInfo.getBucketNum(); ++i) {
+            // create a new tablet with random chosen backends
+            Tablet tablet = new Tablet(getNextId());
+
+            // add tablet to inverted index first
+            index.addTablet(tablet, tabletMeta);
+            tabletIdSet.add(tablet.getId());
+
+            // get BackendIds
+            Map<Tag, List<Long>> chosenBackendIds;
             if (chooseBackendsArbitrary) {
-                backendsPerBucketSeq = Maps.newHashMap();
-            }
-            for (int i = 0; i < distributionInfo.getBucketNum(); ++i) {
-                // create a new tablet with random chosen backends
-                Tablet tablet = new Tablet(this.getNextId());
-
-                // add tablet to inverted index first
-                index.addTablet(tablet, tabletMeta);
-                tabletIdSet.add(tablet.getId());
-
-                // get BackendIds
-                Map<Tag, List<Long>> chosenBackendIds;
-                if (chooseBackendsArbitrary) {
-                    // This is the first colocate table in the group, or just a normal table,
-                    // randomly choose backends
-                    if (!Config.disable_storage_medium_check) {
-                        chosenBackendIds = getCurrentSystemInfo().chooseBackendIdByFilters(replicaAlloc, clusterName,
-                                tabletMeta.getStorageMedium());
-                    } else {
-                        chosenBackendIds = getCurrentSystemInfo().chooseBackendIdByFilters(replicaAlloc, clusterName, null);
-                    }
-
-                    for (Map.Entry<Tag, List<Long>> entry : chosenBackendIds.entrySet()) {
-                        backendsPerBucketSeq.putIfAbsent(entry.getKey(), Lists.newArrayList());
-                        backendsPerBucketSeq.get(entry.getKey()).add(entry.getValue());
-                    }
+                // This is the first colocate table in the group, or just a normal table,
+                // randomly choose backends
+                if (!Config.disable_storage_medium_check) {
+                    chosenBackendIds = getCurrentSystemInfo().chooseBackendIdByFilters(replicaAlloc, clusterName,
+                            tabletMeta.getStorageMedium());
                 } else {
-                    // get backends from existing backend sequence
-                    chosenBackendIds = Maps.newHashMap();
-                    for (Map.Entry<Tag, List<List<Long>>> entry : backendsPerBucketSeq.entrySet()) {
-                        chosenBackendIds.put(entry.getKey(), entry.getValue().get(i));
-                    }
+                    chosenBackendIds = getCurrentSystemInfo().chooseBackendIdByFilters(replicaAlloc, clusterName, null);
                 }
 
-                // create replicas
-                short totalReplicaNum = (short) 0;
-                for (List<Long> backendIds : chosenBackendIds.values()) {
-                    for (long backendId : backendIds) {
-                        long replicaId = this.getNextId();
-                        Replica replica = new Replica(replicaId, backendId, replicaState, version, versionHash,
-                                tabletMeta.getOldSchemaHash());
-                        tablet.addReplica(replica);
-                        totalReplicaNum++;
-                    }
+                for (Map.Entry<Tag, List<Long>> entry : chosenBackendIds.entrySet()) {
+                    backendsPerBucketSeq.putIfAbsent(entry.getKey(), Lists.newArrayList());
+                    backendsPerBucketSeq.get(entry.getKey()).add(entry.getValue());
                 }
-                Preconditions.checkState(totalReplicaNum == replicaAlloc.getTotalReplicaNum(),
-                        totalReplicaNum + " vs. " + replicaAlloc.getTotalReplicaNum());
+            } else {
+                // get backends from existing backend sequence
+                chosenBackendIds = Maps.newHashMap();
+                for (Map.Entry<Tag, List<List<Long>>> entry : backendsPerBucketSeq.entrySet()) {
+                    chosenBackendIds.put(entry.getKey(), entry.getValue().get(i));
+                }
             }
-
-            if (groupId != null && chooseBackendsArbitrary) {
-                colocateIndex.addBackendsPerBucketSeq(groupId, backendsPerBucketSeq);
-                ColocatePersistInfo info = ColocatePersistInfo.createForBackendsPerBucketSeq(groupId, backendsPerBucketSeq);
-                this.editLog.logColocateBackendsPerBucketSeq(info);
+            // create replicas
+            short totalReplicaNum = (short) 0;
+            for (List<Long> backendIds : chosenBackendIds.values()) {
+                for (long backendId : backendIds) {
+                    long replicaId = getNextId();
+                    Replica replica = new Replica(replicaId, backendId, replicaState, version, tabletMeta.getOldSchemaHash());
+                    tablet.addReplica(replica);
+                    totalReplicaNum++;
+                }
             }
+            Preconditions.checkState(totalReplicaNum == replicaAlloc.getTotalReplicaNum(),
+                    totalReplicaNum + " vs. " + replicaAlloc.getTotalReplicaNum());
+        }
 
-        } else {
-            throw new DdlException("Unknown distribution type: " + distributionInfoType);
+        if (groupId != null && chooseBackendsArbitrary) {
+            colocateIndex.addBackendsPerBucketSeq(groupId, backendsPerBucketSeq);
+            ColocatePersistInfo info = ColocatePersistInfo.createForBackendsPerBucketSeq(groupId, backendsPerBucketSeq);
+            editLog.logColocateBackendsPerBucketSeq(info);
         }
     }
 
@@ -4643,11 +4590,11 @@ public class Catalog {
                                 " please use \"DROP table FORCE\".");
                     }
                 }
-                this.unprotectDropTable(db, table, stmt.isForceDrop(), false);
+                unprotectDropTable(db, table, stmt.isForceDrop(), false);
             } finally {
                 table.writeUnlock();
             }
-            this.editLog.logDropTable(info);
+            editLog.logDropTable(info);
         } finally {
             db.writeUnlock();
         }
@@ -4656,14 +4603,14 @@ public class Catalog {
 
     public boolean unprotectDropTable(Database db, Table table, boolean isForceDrop, boolean isReplay) {
         if (table.getType() == TableType.ELASTICSEARCH) {
-            this.esRepository.deRegisterTable(table.getId());
+            esRepository.deRegisterTable(table.getId());
         } else if (table.getType() == TableType.OLAP) {
             // drop all temp partitions of this table, so that there is no temp partitions in recycle bin,
             // which make things easier.
             ((OlapTable) table).dropAllTempPartitions();
         } else if (table.getType() == TableType.ICEBERG) {
             // drop Iceberg database table creation record
-            this.icebergTableCreationRecordMgr.deregisterTable(db, (IcebergTable) table);
+            icebergTableCreationRecordMgr.deregisterTable(db, (IcebergTable) table);
         }
 
         db.dropTable(table.getName());
@@ -4684,7 +4631,7 @@ public class Catalog {
         db.writeLock();
         table.writeLock();
         try {
-            this.unprotectDropTable(db, table, isForceDrop, true);
+            unprotectDropTable(db, table, isForceDrop, true);
         } finally {
             table.writeUnlock();
             db.writeUnlock();
@@ -4718,12 +4665,10 @@ public class Catalog {
         }
 
         Replica replica = new Replica(info.getReplicaId(), info.getBackendId(), info.getVersion(),
-                info.getVersionHash(), schemaHash, info.getDataSize(), info.getRowCount(),
+                schemaHash, info.getDataSize(), info.getRowCount(),
                 ReplicaState.NORMAL,
                 info.getLastFailedVersion(),
-                info.getLastFailedVersionHash(),
-                info.getLastSuccessVersion(),
-                info.getLastSuccessVersionHash());
+                info.getLastSuccessVersion());
         tablet.addReplica(replica);
     }
 
@@ -4734,7 +4679,7 @@ public class Catalog {
         Tablet tablet = materializedIndex.getTablet(info.getTabletId());
         Replica replica = tablet.getReplicaByBackendId(info.getBackendId());
         Preconditions.checkNotNull(replica, info);
-        replica.updateVersionInfo(info.getVersion(), info.getVersionHash(), info.getDataSize(), info.getRowCount());
+        replica.updateVersionInfo(info.getVersion(), info.getDataSize(), info.getRowCount());
         replica.setBad(false);
     }
 
@@ -4743,7 +4688,7 @@ public class Catalog {
         OlapTable olapTable = db.getTableOrMetaException(info.getTableId(), TableType.OLAP);
         olapTable.writeLock();
         try {
-            this.unprotectAddReplica(olapTable, info);
+            unprotectAddReplica(olapTable, info);
         } finally {
             olapTable.writeUnlock();
         }
@@ -4754,7 +4699,7 @@ public class Catalog {
         OlapTable olapTable = db.getTableOrMetaException(info.getTableId(), TableType.OLAP);
         olapTable.writeLock();
         try {
-            this.unprotectUpdateReplica(olapTable, info);
+            unprotectUpdateReplica(olapTable, info);
         } finally {
             olapTable.writeUnlock();
         }
@@ -4772,16 +4717,16 @@ public class Catalog {
         OlapTable olapTable = db.getTableOrMetaException(info.getTableId(), TableType.OLAP);
         olapTable.writeLock();
         try {
-            this.unprotectDeleteReplica(olapTable, info);
+            unprotectDeleteReplica(olapTable, info);
         } finally {
             olapTable.writeUnlock();
         }
     }
 
     public void replayAddFrontend(Frontend fe) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            Frontend existFe = this.checkFeExist(fe.getHost(), fe.getEditLogPort());
+            Frontend existFe = checkFeExist(fe.getHost(), fe.getEditLogPort());
             if (existFe != null) {
                 LOG.warn("fe {} already exist.", existFe);
                 if (existFe.getRole() != fe.getRole()) {
@@ -4799,34 +4744,34 @@ public class Catalog {
                 }
                 return;
             }
-            this.frontends.put(fe.getNodeName(), fe);
+            frontends.put(fe.getNodeName(), fe);
             if (fe.getRole() == FrontendNodeType.FOLLOWER || fe.getRole() == FrontendNodeType.REPLICA) {
                 // DO NOT add helper sockets here, cause BDBHA is not instantiated yet.
                 // helper sockets will be added after start BDBHA
                 // But add to helperNodes, just for show
-                this.helperNodes.add(Pair.create(fe.getHost(), fe.getEditLogPort()));
+                helperNodes.add(Pair.create(fe.getHost(), fe.getEditLogPort()));
             }
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
     public void replayDropFrontend(Frontend frontend) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            Frontend removedFe = this.frontends.remove(frontend.getNodeName());
+            Frontend removedFe = frontends.remove(frontend.getNodeName());
             if (removedFe == null) {
                 LOG.error(frontend.toString() + " does not exist.");
                 return;
             }
             if (removedFe.getRole() == FrontendNodeType.FOLLOWER
                     || removedFe.getRole() == FrontendNodeType.REPLICA) {
-                this.helperNodes.remove(Pair.create(removedFe.getHost(), removedFe.getEditLogPort()));
+                helperNodes.remove(Pair.create(removedFe.getHost(), removedFe.getEditLogPort()));
             }
 
-            this.removedFrontends.add(removedFe.getNodeName());
+            removedFrontends.add(removedFe.getNodeName());
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -4835,13 +4780,13 @@ public class Catalog {
     }
 
     public String getToken() {
-        return this.token;
+        return token;
     }
 
     @Nullable
     public Database getDbNullable(String dbName) {
-        if (this.fullNameToDb.containsKey(dbName)) {
-            return this.fullNameToDb.get(dbName);
+        if (fullNameToDb.containsKey(dbName)) {
+            return fullNameToDb.get(dbName);
         } else {
             // This maybe a information_schema db request, and information_schema db name is case insensitive.
             // So, we first extract db name to check if it is information_schema.
@@ -4851,7 +4796,7 @@ public class Catalog {
             if (fullName.equalsIgnoreCase(InfoSchemaDb.DATABASE_NAME)) {
                 String clusterName = ClusterNamespace.getClusterNameFromFullName(dbName);
                 fullName = ClusterNamespace.getFullName(clusterName, fullName.toLowerCase());
-                return this.fullNameToDb.get(fullName);
+                return fullNameToDb.get(fullName);
             }
         }
         return null;
@@ -4859,20 +4804,20 @@ public class Catalog {
 
     @Nullable
     public Database getDbNullable(long dbId) {
-        return this.idToDb.get(dbId);
+        return idToDb.get(dbId);
     }
 
     public Optional<Database> getDb(String dbName) {
-        return Optional.ofNullable(this.getDbNullable(dbName));
+        return Optional.ofNullable(getDbNullable(dbName));
     }
 
     public Optional<Database> getDb(long dbId) {
-        return Optional.ofNullable(this.getDbNullable(dbId));
+        return Optional.ofNullable(getDbNullable(dbId));
     }
 
     public <E extends Exception> Database
     getDbOrException(String dbName, java.util.function.Function<String, E> e) throws E {
-        Database db = this.getDbNullable(dbName);
+        Database db = getDbNullable(dbName);
         if (db == null) {
             throw e.apply(dbName);
         }
@@ -4881,7 +4826,7 @@ public class Catalog {
 
     public <E extends Exception> Database
     getDbOrException(long dbId, java.util.function.Function<Long, E> e) throws E {
-        Database db = this.getDbNullable(dbId);
+        Database db = getDbNullable(dbId);
         if (db == null) {
             throw e.apply(dbId);
         }
@@ -4889,50 +4834,50 @@ public class Catalog {
     }
 
     public Database getDbOrMetaException(String dbName) throws MetaNotFoundException {
-        return this.getDbOrException(dbName, s -> new MetaNotFoundException("unknown databases, dbName=" + s,
+        return getDbOrException(dbName, s -> new MetaNotFoundException("unknown databases, dbName=" + s,
                 ErrorCode.ERR_BAD_DB_ERROR));
     }
 
     public Database getDbOrMetaException(long dbId) throws MetaNotFoundException {
-        return this.getDbOrException(dbId, s -> new MetaNotFoundException("unknown databases, dbId=" + s,
+        return getDbOrException(dbId, s -> new MetaNotFoundException("unknown databases, dbId=" + s,
                 ErrorCode.ERR_BAD_DB_ERROR));
     }
 
     public Database getDbOrDdlException(String dbName) throws DdlException {
-        return this.getDbOrException(dbName, s -> new DdlException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
+        return getDbOrException(dbName, s -> new DdlException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
                 ErrorCode.ERR_BAD_DB_ERROR));
     }
 
     public Database getDbOrDdlException(long dbId) throws DdlException {
-        return this.getDbOrException(dbId, s -> new DdlException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
+        return getDbOrException(dbId, s -> new DdlException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
                 ErrorCode.ERR_BAD_DB_ERROR));
     }
 
     public Database getDbOrAnalysisException(String dbName) throws AnalysisException {
-        return this.getDbOrException(dbName, s -> new AnalysisException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
+        return getDbOrException(dbName, s -> new AnalysisException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
                 ErrorCode.ERR_BAD_DB_ERROR));
     }
 
     public Database getDbOrAnalysisException(long dbId) throws AnalysisException {
-        return this.getDbOrException(dbId, s -> new AnalysisException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
+        return getDbOrException(dbId, s -> new AnalysisException(ErrorCode.ERR_BAD_DB_ERROR.formatErrorMsg(s),
                 ErrorCode.ERR_BAD_DB_ERROR));
     }
 
     public EditLog getEditLog() {
-        return this.editLog;
+        return editLog;
     }
 
     // Get the next available, needn't lock because of nextId is atomic.
     public long getNextId() {
-        return this.idGenerator.getNextId();
+        return idGenerator.getNextId();
     }
 
     public List<String> getDbNames() {
-        return Lists.newArrayList(this.fullNameToDb.keySet());
+        return Lists.newArrayList(fullNameToDb.keySet());
     }
 
     public List<String> getClusterDbNames(String clusterName) throws AnalysisException {
-        final Cluster cluster = this.nameToCluster.get(clusterName);
+        final Cluster cluster = nameToCluster.get(clusterName);
         if (cluster == null) {
             throw new AnalysisException("No cluster selected");
         }
@@ -4940,7 +4885,7 @@ public class Catalog {
     }
 
     public List<Long> getDbIds() {
-        return Lists.newArrayList(this.idToDb.keySet());
+        return Lists.newArrayList(idToDb.keySet());
     }
 
     public HashMap<Long, TStorageMedium> getPartitionIdToStorageMediumMap() {
@@ -4950,7 +4895,7 @@ public class Catalog {
         // dbId -> (tableId -> partitionId)
         HashMap<Long, Multimap<Long, Long>> changedPartitionsMap = new HashMap<Long, Multimap<Long, Long>>();
         long currentTimeMs = System.currentTimeMillis();
-        List<Long> dbIds = this.getDbIds();
+        List<Long> dbIds = getDbIds();
 
         for (long dbId : dbIds) {
             Database db = this.getDbNullable(dbId);
@@ -4995,7 +4940,7 @@ public class Catalog {
 
         // handle data property changed
         for (Long dbId : changedPartitionsMap.keySet()) {
-            Database db = this.getDbNullable(dbId);
+            Database db = getDbNullable(dbId);
             if (db == null) {
                 LOG.warn("db {} does not exist while checking backend storage medium", dbId);
                 continue;
@@ -5040,7 +4985,7 @@ public class Catalog {
                                             DataProperty.DEFAULT_DATA_PROPERTY,
                                             ReplicaAllocation.NOT_SET,
                                             partitionInfo.getIsInMemory(partition.getId()));
-                            this.editLog.logModifyPartition(info);
+                            editLog.logModifyPartition(info);
                         }
                     } // end for partitions
                 } finally {
@@ -5076,7 +5021,7 @@ public class Catalog {
     }
 
     public UpdateManager getUpdateManager() {
-        return this.updateManager;
+        return updateManager;
     }
 
     public DeleteHandler getDeleteHandler() {
@@ -5088,35 +5033,35 @@ public class Catalog {
     }
 
     public LoadManager getLoadManager() {
-        return this.loadManager;
+        return loadManager;
     }
 
     public StreamLoadRecordMgr getStreamLoadRecordMgr() {
-        return this.streamLoadRecordMgr;
+        return streamLoadRecordMgr;
     }
 
     public IcebergTableCreationRecordMgr getIcebergTableCreationRecordMgr() {
-        return this.icebergTableCreationRecordMgr;
+        return icebergTableCreationRecordMgr;
     }
 
     public MasterTaskExecutor getPendingLoadTaskScheduler() {
-        return this.pendingLoadTaskScheduler;
+        return pendingLoadTaskScheduler;
     }
 
     public MasterTaskExecutor getLoadingLoadTaskScheduler() {
-        return this.loadingLoadTaskScheduler;
+        return loadingLoadTaskScheduler;
     }
 
     public RoutineLoadManager getRoutineLoadManager() {
-        return this.routineLoadManager;
+        return routineLoadManager;
     }
 
     public SqlBlockRuleMgr getSqlBlockRuleMgr() {
-        return this.sqlBlockRuleMgr;
+        return sqlBlockRuleMgr;
     }
 
     public RoutineLoadTaskScheduler getRoutineLoadTaskScheduler() {
-        return this.routineLoadTaskScheduler;
+        return routineLoadTaskScheduler;
     }
 
     public ExportMgr getExportMgr() {
@@ -5160,12 +5105,12 @@ public class Catalog {
     }
 
     public Pair<String, Integer> getHelperNode() {
-        Preconditions.checkState(this.helperNodes.size() >= 1);
+        Preconditions.checkState(helperNodes.size() >= 1);
         return this.helperNodes.get(0);
     }
 
     public List<Pair<String, Integer>> getHelperNodes() {
-        return Lists.newArrayList(this.helperNodes);
+        return Lists.newArrayList(helperNodes);
     }
 
     public Pair<String, Integer> getSelfNode() {
@@ -5181,21 +5126,21 @@ public class Catalog {
     }
 
     public int getMasterRpcPort() {
-        if (!this.isReady()) {
+        if (!isReady()) {
             return 0;
         }
         return this.masterRpcPort;
     }
 
     public int getMasterHttpPort() {
-        if (!this.isReady()) {
+        if (!isReady()) {
             return 0;
         }
         return this.masterHttpPort;
     }
 
     public String getMasterIp() {
-        if (!this.isReady()) {
+        if (!isReady()) {
             return "";
         }
         return this.masterIp;
@@ -5220,7 +5165,7 @@ public class Catalog {
     }
 
     public boolean isMaster() {
-        return this.feType == FrontendNodeType.MASTER;
+        return feType == FrontendNodeType.MASTER;
     }
 
     public void setSynchronizedTime(long time) {
@@ -5232,7 +5177,7 @@ public class Catalog {
     }
 
     public void setNextId(long id) {
-        this.idGenerator.setId(id);
+        idGenerator.setId(id);
     }
 
     public void setHaProtocol(HAProtocol protocol) {
@@ -5353,15 +5298,15 @@ public class Catalog {
      * used for handling backup opt
      */
     public void backup(BackupStmt stmt) throws DdlException {
-        this.getBackupHandler().process(stmt);
+        getBackupHandler().process(stmt);
     }
 
     public void restore(RestoreStmt stmt) throws DdlException {
-        this.getBackupHandler().process(stmt);
+        getBackupHandler().process(stmt);
     }
 
     public void cancelBackup(CancelBackupStmt stmt) throws DdlException {
-        this.getBackupHandler().cancel(stmt);
+        getBackupHandler().cancel(stmt);
     }
 
     // entry of rename table operation
@@ -5399,7 +5344,7 @@ public class Catalog {
                 db.createTable(table);
 
                 TableInfo tableInfo = TableInfo.createForTableRename(db.getId(), table.getId(), newTableName);
-                this.editLog.logTableRename(tableInfo);
+                editLog.logTableRename(tableInfo);
                 LOG.info("rename table[{}] to {}", oldTableName, newTableName);
             } finally {
                 table.writeUnlock();
@@ -5412,7 +5357,7 @@ public class Catalog {
     public void refreshExternalTableSchema(Database db, Table table, List<Column> newSchema) {
         RefreshExternalTableInfo refreshExternalTableInfo = new RefreshExternalTableInfo(db.getFullName(),
                 table.getName(), newSchema);
-        this.editLog.logRefreshExternalTableSchema(refreshExternalTableInfo);
+        editLog.logRefreshExternalTableSchema(refreshExternalTableInfo);
         LOG.info("refresh db[{}] table[{}] for schema change", db.getFullName(), table.getName());
     }
 
@@ -5457,7 +5402,7 @@ public class Catalog {
                     return;
                 }
             }
-            ColocateGroupSchema groupSchema = this.colocateTableIndex.getGroupSchema(fullGroupName);
+            ColocateGroupSchema groupSchema = colocateTableIndex.getGroupSchema(fullGroupName);
             if (groupSchema == null) {
                 // user set a new colocate group,
                 // check if all partitions all this table has same buckets num and same replication number
@@ -5492,15 +5437,15 @@ public class Catalog {
                 backendsPerBucketSeq = table.getArbitraryTabletBucketsSeq();
             }
             // change group after getting backends sequence(if has), in case 'getArbitraryTabletBucketsSeq' failed
-            groupId = this.colocateTableIndex.changeGroup(db.getId(), table, oldGroup, colocateGroup, assignedGroupId);
+            groupId = colocateTableIndex.changeGroup(db.getId(), table, oldGroup, colocateGroup, assignedGroupId);
 
             if (groupSchema == null) {
                 Preconditions.checkNotNull(backendsPerBucketSeq);
-                this.colocateTableIndex.addBackendsPerBucketSeq(groupId, backendsPerBucketSeq);
+                colocateTableIndex.addBackendsPerBucketSeq(groupId, backendsPerBucketSeq);
             }
 
             // set this group as unstable
-            this.colocateTableIndex.markGroupUnstable(groupId, "Colocation group modified by user", false /* edit log is along with modify table log */);
+            colocateTableIndex.markGroupUnstable(groupId, "Colocation group modified by user", false /* edit log is along with modify table log */);
             table.setColocateGroup(colocateGroup);
         } else {
             // unset colocation group
@@ -5511,9 +5456,9 @@ public class Catalog {
 
             // when replayModifyTableColocate, we need the groupId info
             String fullGroupName = db.getId() + "_" + oldGroup;
-            groupId = this.colocateTableIndex.getGroupSchema(fullGroupName).getGroupId();
+            groupId = colocateTableIndex.getGroupSchema(fullGroupName).getGroupId();
 
-            this.colocateTableIndex.removeTable(table.getId());
+            colocateTableIndex.removeTable(table.getId());
             table.setColocateGroup(null);
         }
 
@@ -5521,7 +5466,7 @@ public class Catalog {
             Map<String, String> properties = Maps.newHashMapWithExpectedSize(1);
             properties.put(PropertyAnalyzer.PROPERTIES_COLOCATE_WITH, colocateGroup);
             TablePropertyInfo info = new TablePropertyInfo(table.getId(), groupId, properties);
-            this.editLog.logModifyTableColocate(info);
+            editLog.logModifyTableColocate(info);
         }
         LOG.info("finished modify table's colocation property. table: {}, is replay: {}",
                 table.getName(), isReplay);
@@ -5536,7 +5481,7 @@ public class Catalog {
         OlapTable olapTable = db.getTableOrMetaException(tableId, TableType.OLAP);
         olapTable.writeLock();
         try {
-            this.modifyTableColocate(db, olapTable, properties.get(PropertyAnalyzer.PROPERTIES_COLOCATE_WITH), true,
+            modifyTableColocate(db, olapTable, properties.get(PropertyAnalyzer.PROPERTIES_COLOCATE_WITH), true,
                     info.getGroupId());
         } catch (DdlException e) {
             // should not happen
@@ -5579,7 +5524,7 @@ public class Catalog {
 
             // log
             TableInfo tableInfo = TableInfo.createForRollupRename(db.getId(), table.getId(), indexId, newRollupName);
-            this.editLog.logRollupRename(tableInfo);
+            editLog.logRollupRename(tableInfo);
             LOG.info("rename rollup[{}] to {}", rollupName, newRollupName);
         } finally {
             table.writeUnlock();
@@ -5640,7 +5585,7 @@ public class Catalog {
             // log
             TableInfo tableInfo = TableInfo.createForPartitionRename(db.getId(), table.getId(), partition.getId(),
                     newPartitionName);
-            this.editLog.logPartitionRename(tableInfo);
+            editLog.logPartitionRename(tableInfo);
             LOG.info("rename partition[{}] to {}", partitionName, newPartitionName);
         } finally {
             table.writeUnlock();
@@ -5675,7 +5620,7 @@ public class Catalog {
 
     public void modifyTableDynamicPartition(Database db, OlapTable table, Map<String, String> properties)
             throws UserException {
-        this.convertDynamicPartitionReplicaNumToReplicaAllocation(properties);
+        convertDynamicPartitionReplicaNumToReplicaAllocation(properties);
         Map<String, String> logProperties = new HashMap<>(properties);
         TableProperty tableProperty = table.getTableProperty();
         if (tableProperty == null) {
@@ -5691,10 +5636,10 @@ public class Catalog {
         }
 
         DynamicPartitionUtil.registerOrRemoveDynamicPartitionTable(db.getId(), table, false);
-        this.dynamicPartitionScheduler.createOrUpdateRuntimeInfo(
+        dynamicPartitionScheduler.createOrUpdateRuntimeInfo(
                 table.getId(), DynamicPartitionScheduler.LAST_UPDATE_TIME, TimeUtils.getCurrentFormatTime());
         ModifyTablePropertyOperationLog info = new ModifyTablePropertyOperationLog(db.getId(), table.getId(), logProperties);
-        this.editLog.logDynamicPartition(info);
+        editLog.logDynamicPartition(info);
     }
 
     private void convertDynamicPartitionReplicaNumToReplicaAllocation(Map<String, String> properties) {
@@ -5737,7 +5682,7 @@ public class Catalog {
         // log
         ModifyPartitionInfo info = new ModifyPartitionInfo(db.getId(), table.getId(), partition.getId(),
                 newDataProperty, replicaAlloc, isInMemory);
-        this.editLog.logModifyPartition(info);
+        editLog.logModifyPartition(info);
         LOG.debug("modify partition[{}-{}-{}] replica allocation to {}", db.getId(), table.getId(),
                 partition.getName(), replicaAlloc.toCreateStmt());
     }
@@ -5764,7 +5709,7 @@ public class Catalog {
 
         // log
         ModifyTablePropertyOperationLog info = new ModifyTablePropertyOperationLog(db.getId(), table.getId(), properties);
-        this.editLog.logModifyReplicationNum(info);
+        editLog.logModifyReplicationNum(info);
         LOG.debug("modify table[{}] replication num to {}", table.getName(),
                 properties.get(PropertyAnalyzer.PROPERTIES_REPLICATION_NUM));
     }
@@ -5786,7 +5731,7 @@ public class Catalog {
         }
 
         ModifyTablePropertyOperationLog info = new ModifyTablePropertyOperationLog(db.getId(), table.getId(), properties);
-        this.editLog.logModifyInMemory(info);
+        editLog.logModifyInMemory(info);
     }
 
     public void replayModifyTableProperty(short opCode, ModifyTablePropertyOperationLog info) throws MetaNotFoundException {
@@ -5829,33 +5774,26 @@ public class Catalog {
                 throw new DdlException("Only support change partitioned table's distribution.");
             }
 
-            DistributionInfo defaultDistributionInfo = olapTable.getDefaultDistributionInfo();
-            if (defaultDistributionInfo.getType() != DistributionInfoType.HASH) {
-                throw new DdlException("Cannot change default bucket number of distribution type " + defaultDistributionInfo.getType());
-            }
-
             DistributionDesc distributionDesc = modifyDistributionClause.getDistributionDesc();
-
-            DistributionInfo distributionInfo = null;
-
-            List<Column> baseSchema = olapTable.getBaseSchema();
-
             if (distributionDesc != null) {
-                distributionInfo = distributionDesc.toDistributionInfo(baseSchema);
+                DistributionInfo defaultDistributionInfo = olapTable.getDefaultDistributionInfo();
+                List<Column> baseSchema = olapTable.getBaseSchema();
+                DistributionInfo distributionInfo = distributionDesc.toDistributionInfo(baseSchema);
                 // for now. we only support modify distribution's bucket num
-                if (distributionInfo.getType() != DistributionInfoType.HASH) {
-                    throw new DdlException("Cannot change distribution type to " + distributionInfo.getType());
+                if (distributionInfo.getType() != defaultDistributionInfo.getType()) {
+                    throw new DdlException("Cannot change distribution type when modify default distribution bucket num");
+                }
+                if (distributionInfo.getType() == DistributionInfoType.HASH) {
+                    HashDistributionInfo hashDistributionInfo = (HashDistributionInfo) distributionInfo;
+                    List<Column> newDistriCols = hashDistributionInfo.getDistributionColumns();
+                    List<Column> defaultDistriCols = ((HashDistributionInfo) defaultDistributionInfo).getDistributionColumns();
+                    if (!newDistriCols.equals(defaultDistriCols)) {
+                        throw new DdlException("Cannot assign hash distribution with different distribution cols. "
+                                + "default is: " + defaultDistriCols);
+                    }
                 }
 
-                HashDistributionInfo hashDistributionInfo = (HashDistributionInfo) distributionInfo;
-                List<Column> newDistriCols = hashDistributionInfo.getDistributionColumns();
-                List<Column> defaultDistriCols = ((HashDistributionInfo) defaultDistributionInfo).getDistributionColumns();
-                if (!newDistriCols.equals(defaultDistriCols)) {
-                    throw new DdlException("Cannot assign hash distribution with different distribution cols. "
-                            + "default is: " + defaultDistriCols);
-                }
-
-                int bucketNum = hashDistributionInfo.getBucketNum();
+                int bucketNum = distributionInfo.getBucketNum();
                 if (bucketNum <= 0) {
                     throw new DdlException("Cannot assign hash distribution buckets less than 1");
                 }
@@ -5863,7 +5801,7 @@ public class Catalog {
                 defaultDistributionInfo.setBucketNum(bucketNum);
 
                 ModifyTableDefaultDistributionBucketNumOperationLog info = new ModifyTableDefaultDistributionBucketNumOperationLog(db.getId(), olapTable.getId(), bucketNum);
-                this.editLog.logModifyDefaultDistributionBucketNum(info);
+                editLog.logModifyDefaultDistributionBucketNum(info);
                 LOG.info("modify table[{}] default bucket num to {}", olapTable.getName(), bucketNum);
             }
         } finally {
@@ -5871,7 +5809,7 @@ public class Catalog {
         }
     }
 
-    public void replayModifyTableDefaultDistributionBucketNum(short opCode, ModifyTableDefaultDistributionBucketNumOperationLog info) throws MetaNotFoundException {
+    public void replayModifyTableDefaultDistributionBucketNum(ModifyTableDefaultDistributionBucketNumOperationLog info) throws MetaNotFoundException {
         long dbId = info.getDbId();
         long tableId = info.getTableId();
         int bucketNum = info.getBucketNum();
@@ -5927,7 +5865,7 @@ public class Catalog {
 
     // Change current database of this session.
     public void changeDb(ConnectContext ctx, String qualifiedDb) throws DdlException {
-        if (!this.auth.checkDbPriv(ctx, qualifiedDb, PrivPredicate.SHOW)) {
+        if (!auth.checkDbPriv(ctx, qualifiedDb, PrivPredicate.SHOW)) {
             ErrorReport.reportDdlException(ErrorCode.ERR_DBACCESS_DENIED_ERROR, ctx.getQualifiedUser(), qualifiedDb);
         }
 
@@ -5943,8 +5881,8 @@ public class Catalog {
         if (SingletonHolder.INSTANCE.fullNameToDb != null) {
             SingletonHolder.INSTANCE.fullNameToDb.clear();
         }
-        if (this.load.getIdToLoadJob() != null) {
-            this.load.getIdToLoadJob().clear();
+        if (load.getIdToLoadJob() != null) {
+            load.getIdToLoadJob().clear();
             // load = null;
         }
         System.gc();
@@ -5998,23 +5936,23 @@ public class Catalog {
      * deterministic results.
      */
     public Function getFunction(Function desc, Function.CompareMode mode) {
-        return this.functionSet.getFunction(desc, mode);
+        return functionSet.getFunction(desc, mode);
     }
 
     public List<Function> getBuiltinFunctions() {
-        return this.functionSet.getBulitinFunctions();
+        return functionSet.getBulitinFunctions();
     }
 
     public Function getTableFunction(Function desc, Function.CompareMode mode) {
-        return this.functionSet.getFunction(desc, mode, true);
+        return functionSet.getFunction(desc, mode, true);
     }
 
     public boolean isNondeterministicFunction(String funcName) {
-        return this.functionSet.isNondeterministicFunction(funcName);
+        return functionSet.isNondeterministicFunction(funcName);
     }
 
     public boolean isNullResultWithOneNullParamFunction(String funcName) {
-        return this.functionSet.isNullResultWithOneNullParamFunctions(funcName);
+        return functionSet.isNullResultWithOneNullParamFunctions(funcName);
     }
 
     /**
@@ -6025,36 +5963,36 @@ public class Catalog {
      */
     public void createCluster(CreateClusterStmt stmt) throws DdlException {
         final String clusterName = stmt.getClusterName();
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            if (this.nameToCluster.containsKey(clusterName)) {
+            if (nameToCluster.containsKey(clusterName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_HAS_EXIST, clusterName);
             } else {
-                List<Long> backendList = this.systemInfo.createCluster(clusterName, stmt.getInstanceNum());
+                List<Long> backendList = systemInfo.createCluster(clusterName, stmt.getInstanceNum());
                 // 1: BE returned is less than requested, throws DdlException.
                 // 2: BE returned is more than or equal to 0, succeeds.
                 if (backendList != null || stmt.getInstanceNum() == 0) {
-                    final long id = this.getNextId();
+                    final long id = getNextId();
                     final Cluster cluster = new Cluster(clusterName, id);
                     cluster.setBackendIdList(backendList);
-                    this.unprotectCreateCluster(cluster);
+                    unprotectCreateCluster(cluster);
                     if (clusterName.equals(SystemInfoService.DEFAULT_CLUSTER)) {
-                        for (Database db : this.idToDb.values()) {
+                        for (Database db : idToDb.values()) {
                             if (db.getClusterName().equals(SystemInfoService.DEFAULT_CLUSTER)) {
                                 cluster.addDb(db.getFullName(), db.getId());
                             }
                         }
                     }
-                    this.editLog.logCreateCluster(cluster);
+                    editLog.logCreateCluster(cluster);
                     LOG.info("finish to create cluster: {}", clusterName);
                 } else {
                     ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_BE_NOT_ENOUGH);
                 }
             }
         } finally {
-            this.unlock();
+            unlock();
         }
 
         // create super user for this cluster
@@ -6064,27 +6002,27 @@ public class Catalog {
         } catch (AnalysisException e) {
             LOG.error("should not happen", e);
         }
-        this.auth.createUser(new CreateUserStmt(new UserDesc(adminUser, "", true)));
+        auth.createUser(new CreateUserStmt(new UserDesc(adminUser, "", true)));
     }
 
     private void unprotectCreateCluster(Cluster cluster) {
         for (Long id : cluster.getBackendIdList()) {
-            final Backend backend = this.systemInfo.getBackend(id);
+            final Backend backend = systemInfo.getBackend(id);
             backend.setOwnerClusterName(cluster.getName());
             backend.setBackendState(BackendState.using);
         }
 
-        this.idToCluster.put(cluster.getId(), cluster);
-        this.nameToCluster.put(cluster.getName(), cluster);
+        idToCluster.put(cluster.getId(), cluster);
+        nameToCluster.put(cluster.getName(), cluster);
 
         // create info schema db
         final InfoSchemaDb infoDb = new InfoSchemaDb(cluster.getName());
         infoDb.setClusterName(cluster.getName());
-        this.unprotectCreateDb(infoDb);
+        unprotectCreateDb(infoDb);
 
         // only need to create default cluster once.
         if (cluster.getName().equalsIgnoreCase(SystemInfoService.DEFAULT_CLUSTER)) {
-            this.isDefaultClusterCreated = true;
+            isDefaultClusterCreated = true;
         }
     }
 
@@ -6094,11 +6032,11 @@ public class Catalog {
      * @param cluster
      */
     public void replayCreateCluster(Cluster cluster) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            this.unprotectCreateCluster(cluster);
+            unprotectCreateCluster(cluster);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -6109,16 +6047,16 @@ public class Catalog {
      * @throws DdlException
      */
     public void dropCluster(DropClusterStmt stmt) throws DdlException {
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
             final String clusterName = stmt.getClusterName();
-            final Cluster cluster = this.nameToCluster.get(clusterName);
+            final Cluster cluster = nameToCluster.get(clusterName);
             if (cluster == null) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_NO_EXISTS, clusterName);
             }
-            final List<Backend> backends = this.systemInfo.getClusterBackends(clusterName);
+            final List<Backend> backends = systemInfo.getClusterBackends(clusterName);
             for (Backend backend : backends) {
                 if (backend.isDecommissioned()) {
                     ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_ALTER_BE_IN_DECOMMISSION, clusterName);
@@ -6130,43 +6068,43 @@ public class Catalog {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_DELETE_DB_EXIST, clusterName);
             }
 
-            this.systemInfo.releaseBackends(clusterName, false /* is not replay */);
+            systemInfo.releaseBackends(clusterName, false /* is not replay */);
             final ClusterInfo info = new ClusterInfo(clusterName, cluster.getId());
-            this.unprotectDropCluster(info, false /* is not replay */);
-            this.editLog.logDropCluster(info);
+            unprotectDropCluster(info, false /* is not replay */);
+            editLog.logDropCluster(info);
         } finally {
-            this.unlock();
+            unlock();
         }
 
         // drop user of this cluster
         // set is replay to true, not write log
-        this.auth.dropUserOfCluster(stmt.getClusterName(), true /* is replay */);
+        auth.dropUserOfCluster(stmt.getClusterName(), true /* is replay */);
     }
 
     private void unprotectDropCluster(ClusterInfo info, boolean isReplay) {
-        this.systemInfo.releaseBackends(info.getClusterName(), isReplay);
-        this.idToCluster.remove(info.getClusterId());
-        this.nameToCluster.remove(info.getClusterName());
-        final Database infoSchemaDb = this.fullNameToDb.get(InfoSchemaDb.getFullInfoSchemaDbName(info.getClusterName()));
-        this.fullNameToDb.remove(infoSchemaDb.getFullName());
-        this.idToDb.remove(infoSchemaDb.getId());
+        systemInfo.releaseBackends(info.getClusterName(), isReplay);
+        idToCluster.remove(info.getClusterId());
+        nameToCluster.remove(info.getClusterName());
+        final Database infoSchemaDb = fullNameToDb.get(InfoSchemaDb.getFullInfoSchemaDbName(info.getClusterName()));
+        fullNameToDb.remove(infoSchemaDb.getFullName());
+        idToDb.remove(infoSchemaDb.getId());
     }
 
     public void replayDropCluster(ClusterInfo info) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            this.unprotectDropCluster(info, true/* is replay */);
+            unprotectDropCluster(info, true/* is replay */);
         } finally {
-            this.unlock();
+            unlock();
         }
 
-        this.auth.dropUserOfCluster(info.getClusterName(), true /* is replay */);
+        auth.dropUserOfCluster(info.getClusterName(), true /* is replay */);
     }
 
     public void replayExpandCluster(ClusterInfo info) {
-        this.tryLock(true);
+        tryLock(true);
         try {
-            final Cluster cluster = this.nameToCluster.get(info.getClusterName());
+            final Cluster cluster = nameToCluster.get(info.getClusterName());
             cluster.addBackends(info.getBackendIdList());
 
             for (Long beId : info.getBackendIdList()) {
@@ -6178,7 +6116,7 @@ public class Catalog {
                 be.setBackendState(BackendState.using);
             }
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -6191,11 +6129,11 @@ public class Catalog {
     public void processModifyCluster(AlterClusterStmt stmt) throws UserException {
         final String clusterName = stmt.getAlterClusterName();
         final int newInstanceNum = stmt.getInstanceNum();
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            Cluster cluster = this.nameToCluster.get(clusterName);
+            Cluster cluster = nameToCluster.get(clusterName);
             if (cluster == null) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_NO_EXISTS, clusterName);
             }
@@ -6203,7 +6141,7 @@ public class Catalog {
             // check if this cluster has backend in decommission
             final List<Long> backendIdsInCluster = cluster.getBackendIdList();
             for (Long beId : backendIdsInCluster) {
-                Backend be = this.systemInfo.getBackend(beId);
+                Backend be = systemInfo.getBackend(beId);
                 if (be.isDecommissioned()) {
                     ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_ALTER_BE_IN_DECOMMISSION, clusterName);
                 }
@@ -6212,17 +6150,17 @@ public class Catalog {
             final int oldInstanceNum = backendIdsInCluster.size();
             if (newInstanceNum > oldInstanceNum) {
                 // expansion
-                final List<Long> expandBackendIds = this.systemInfo.calculateExpansionBackends(clusterName,
+                final List<Long> expandBackendIds = systemInfo.calculateExpansionBackends(clusterName,
                         newInstanceNum - oldInstanceNum);
                 if (expandBackendIds == null) {
                     ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_BE_NOT_ENOUGH);
                 }
                 cluster.addBackends(expandBackendIds);
                 final ClusterInfo info = new ClusterInfo(clusterName, cluster.getId(), expandBackendIds);
-                this.editLog.logExpandCluster(info);
+                editLog.logExpandCluster(info);
             } else if (newInstanceNum < oldInstanceNum) {
                 // shrink
-                final List<Long> decomBackendIds = this.systemInfo.calculateDecommissionBackends(clusterName,
+                final List<Long> decomBackendIds = systemInfo.calculateDecommissionBackends(clusterName,
                         oldInstanceNum - newInstanceNum);
                 if (decomBackendIds == null || decomBackendIds.size() == 0) {
                     ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_BACKEND_ERROR);
@@ -6230,7 +6168,7 @@ public class Catalog {
 
                 List<String> hostPortList = Lists.newArrayList();
                 for (Long id : decomBackendIds) {
-                    final Backend backend = this.systemInfo.getBackend(id);
+                    final Backend backend = systemInfo.getBackend(id);
                     hostPortList.add(new StringBuilder().append(backend.getHost()).append(":")
                             .append(backend.getHeartbeatPort()).toString());
                 }
@@ -6253,7 +6191,7 @@ public class Catalog {
             }
 
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -6268,7 +6206,7 @@ public class Catalog {
                     ConnectContext.get().getQualifiedUser(), "enter");
         }
 
-        if (!this.nameToCluster.containsKey(clusterName)) {
+        if (!nameToCluster.containsKey(clusterName)) {
             ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_NO_EXISTS, clusterName);
         }
 
@@ -6287,14 +6225,14 @@ public class Catalog {
         final String srcDbName = stmt.getSrcDb();
         final String destDbName = stmt.getDestDb();
 
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            if (!this.nameToCluster.containsKey(srcClusterName)) {
+            if (!nameToCluster.containsKey(srcClusterName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_SRC_CLUSTER_NOT_EXIST, srcClusterName);
             }
-            if (!this.nameToCluster.containsKey(destClusterName)) {
+            if (!nameToCluster.containsKey(destClusterName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_DEST_CLUSTER_NOT_EXIST, destClusterName);
             }
 
@@ -6311,7 +6249,7 @@ public class Catalog {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_MIGRATION_NO_LINK, srcDbName, destDbName);
             }
 
-            final Database db = this.fullNameToDb.get(srcDbName);
+            final Database db = fullNameToDb.get(srcDbName);
 
             // if the max replication num of the src db is larger then the backends num of the dest cluster,
             // the migration will not be processed.
@@ -6327,7 +6265,7 @@ public class Catalog {
                 param.addStringParam(srcDbName);
                 param.addStringParam(destClusterName);
                 param.addStringParam(srcClusterName);
-                this.fullNameToDb.remove(db.getFullName());
+                fullNameToDb.remove(db.getFullName());
                 srcCluster.removeDb(db.getFullName(), db.getId());
                 destCluster.removeLinkDb(param);
                 destCluster.addDb(destDbName, db.getId());
@@ -6342,12 +6280,12 @@ public class Catalog {
                 } finally {
                     db.writeUnlock();
                 }
-                this.editLog.logMigrateCluster(param);
+                editLog.logMigrateCluster(param);
             } else {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_MIGRATION_NO_LINK, srcDbName, destDbName);
             }
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -6356,13 +6294,13 @@ public class Catalog {
         final String srcDbName = param.getStringParam(1);
         final String desClusterName = param.getStringParam(2);
         final String srcClusterName = param.getStringParam(3);
-        this.tryLock(true);
+        tryLock(true);
         try {
             final Cluster desCluster = this.nameToCluster.get(desClusterName);
             final Cluster srcCluster = this.nameToCluster.get(srcClusterName);
-            final Database db = this.fullNameToDb.get(srcDbName);
+            final Database db = fullNameToDb.get(srcDbName);
             if (db.getDbState() == DbState.LINK) {
-                this.fullNameToDb.remove(db.getFullName());
+                fullNameToDb.remove(db.getFullName());
                 srcCluster.removeDb(db.getFullName(), db.getId());
                 desCluster.removeLinkDb(param);
                 desCluster.addDb(param.getStringParam(), db.getId());
@@ -6375,7 +6313,7 @@ public class Catalog {
                 db.writeUnlock();
             }
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -6384,18 +6322,18 @@ public class Catalog {
         final String srcDbName = param.getStringParam(1);
         final String desDbName = param.getStringParam();
 
-        this.tryLock(true);
+        tryLock(true);
         try {
             final Cluster desCluster = this.nameToCluster.get(desClusterName);
-            final Database srcDb = this.fullNameToDb.get(srcDbName);
+            final Database srcDb = fullNameToDb.get(srcDbName);
             srcDb.writeLock();
             srcDb.setDbState(DbState.LINK);
             srcDb.setAttachDb(desDbName);
             srcDb.writeUnlock();
             desCluster.addLinkDb(param);
-            this.fullNameToDb.put(desDbName, srcDb);
+            fullNameToDb.put(desDbName, srcDb);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
@@ -6411,15 +6349,15 @@ public class Catalog {
         final String srcDbName = stmt.getSrcDb();
         final String destDbName = stmt.getDestDb();
 
-        if (!this.tryLock(false)) {
+        if (!tryLock(false)) {
             throw new DdlException("Failed to acquire catalog lock. Try again");
         }
         try {
-            if (!this.nameToCluster.containsKey(srcClusterName)) {
+            if (!nameToCluster.containsKey(srcClusterName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_SRC_CLUSTER_NOT_EXIST, srcClusterName);
             }
 
-            if (!this.nameToCluster.containsKey(destClusterName)) {
+            if (!nameToCluster.containsKey(destClusterName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_DEST_CLUSTER_NOT_EXIST, destClusterName);
             }
 
@@ -6427,7 +6365,7 @@ public class Catalog {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_MIGRATE_SAME_CLUSTER);
             }
 
-            if (this.fullNameToDb.containsKey(destDbName)) {
+            if (fullNameToDb.containsKey(destDbName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_DB_CREATE_EXISTS, destDbName);
             }
 
@@ -6437,7 +6375,7 @@ public class Catalog {
             if (!srcCluster.containDb(srcDbName)) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_SRC_DB_NOT_EXIST, srcDbName);
             }
-            final Database srcDb = this.fullNameToDb.get(srcDbName);
+            final Database srcDb = fullNameToDb.get(srcDbName);
 
             if (srcDb.getDbState() != DbState.NORMAL) {
                 ErrorReport.reportDdlException(ErrorCode.ERR_CLUSTER_DB_STATE_LINK_OR_MIGRATE,
@@ -6452,7 +6390,7 @@ public class Catalog {
                 srcDb.writeUnlock();
             }
 
-            final long id = this.getNextId();
+            final long id = getNextId();
             final BaseParam param = new BaseParam();
             param.addStringParam(destDbName);
             param.addStringParam(srcDbName);
@@ -6461,19 +6399,19 @@ public class Catalog {
             param.addStringParam(destClusterName);
             param.addStringParam(srcClusterName);
             destCluster.addLinkDb(param);
-            this.fullNameToDb.put(destDbName, srcDb);
-            this.editLog.logLinkCluster(param);
+            fullNameToDb.put(destDbName, srcDb);
+            editLog.logLinkCluster(param);
         } finally {
-            this.unlock();
+            unlock();
         }
     }
 
     public Cluster getCluster(String clusterName) {
-        return this.nameToCluster.get(clusterName);
+        return nameToCluster.get(clusterName);
     }
 
     public List<String> getClusterNames() {
-        return new ArrayList<String>(this.nameToCluster.keySet());
+        return new ArrayList<String>(nameToCluster.keySet());
     }
 
     /**
@@ -6483,13 +6421,13 @@ public class Catalog {
      */
     public Set<BaseParam> getMigrations() {
         final Set<BaseParam> infos = Sets.newHashSet();
-        for (Database db : this.fullNameToDb.values()) {
+        for (Database db : fullNameToDb.values()) {
             db.readLock();
             try {
                 if (db.getDbState() == DbState.MOVE) {
                     int tabletTotal = 0;
                     int tabletQuorum = 0;
-                    final Set<Long> beIds = Sets.newHashSet(this.systemInfo.getClusterBackendIds(db.getClusterName()));
+                    final Set<Long> beIds = Sets.newHashSet(systemInfo.getClusterBackendIds(db.getClusterName()));
                     final Set<String> tableNames = db.getTableNamesWithLock();
                     for (String tableName : tableNames) {
 
@@ -6548,46 +6486,44 @@ public class Catalog {
     }
 
     public long loadCluster(DataInputStream dis, long checksum) throws IOException, DdlException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_30) {
-            int clusterCount = dis.readInt();
-            checksum ^= clusterCount;
-            for (long i = 0; i < clusterCount; ++i) {
-                final Cluster cluster = Cluster.read(dis);
-                checksum ^= cluster.getId();
+        int clusterCount = dis.readInt();
+        checksum ^= clusterCount;
+        for (long i = 0; i < clusterCount; ++i) {
+            final Cluster cluster = Cluster.read(dis);
+            checksum ^= cluster.getId();
 
-                List<Long> latestBackendIds = this.systemInfo.getClusterBackendIds(cluster.getName());
-                if (latestBackendIds.size() != cluster.getBackendIdList().size()) {
-                    LOG.warn("Cluster:" + cluster.getName() + ", backends in Cluster is "
-                            + cluster.getBackendIdList().size() + ", backends in SystemInfoService is "
-                            + cluster.getBackendIdList().size());
-                }
-                // The number of BE in cluster is not same as in SystemInfoService, when perform 'ALTER
-                // SYSTEM ADD BACKEND TO ...' or 'ALTER SYSTEM ADD BACKEND ...', because both of them are 
-                // for adding BE to some Cluster, but loadCluster is after loadBackend.
-                cluster.setBackendIdList(latestBackendIds);
-
-                String dbName = InfoSchemaDb.getFullInfoSchemaDbName(cluster.getName());
-                InfoSchemaDb db;
-                // Use real Catalog instance to avoid InfoSchemaDb id continuously increment
-                // when checkpoint thread load image.
-                if (Catalog.getServingCatalog().getFullNameToDb().containsKey(dbName)) {
-                    db = (InfoSchemaDb) Catalog.getServingCatalog().getFullNameToDb().get(dbName);
-                } else {
-                    db = new InfoSchemaDb(cluster.getName());
-                    db.setClusterName(cluster.getName());
-                }
-                String errMsg = "InfoSchemaDb id shouldn't larger than 10000, please restart your FE server";
-                // Every time we construct the InfoSchemaDb, which id will increment.
-                // When InfoSchemaDb id larger than 10000 and put it to idToDb,
-                // which may be overwrite the normal db meta in idToDb,
-                // so we ensure InfoSchemaDb id less than 10000.
-                Preconditions.checkState(db.getId() < NEXT_ID_INIT_VALUE, errMsg);
-                this.idToDb.put(db.getId(), db);
-                this.fullNameToDb.put(db.getFullName(), db);
-                cluster.addDb(dbName, db.getId());
-                this.idToCluster.put(cluster.getId(), cluster);
-                this.nameToCluster.put(cluster.getName(), cluster);
+            List<Long> latestBackendIds = systemInfo.getClusterBackendIds(cluster.getName());
+            if (latestBackendIds.size() != cluster.getBackendIdList().size()) {
+                LOG.warn("Cluster:" + cluster.getName() + ", backends in Cluster is "
+                        + cluster.getBackendIdList().size() + ", backends in SystemInfoService is "
+                        + cluster.getBackendIdList().size());
             }
+            // The number of BE in cluster is not same as in SystemInfoService, when perform 'ALTER
+            // SYSTEM ADD BACKEND TO ...' or 'ALTER SYSTEM ADD BACKEND ...', because both of them are
+            // for adding BE to some Cluster, but loadCluster is after loadBackend.
+            cluster.setBackendIdList(latestBackendIds);
+
+            String dbName = InfoSchemaDb.getFullInfoSchemaDbName(cluster.getName());
+            InfoSchemaDb db;
+            // Use real Catalog instance to avoid InfoSchemaDb id continuously increment
+            // when checkpoint thread load image.
+            if (Catalog.getServingCatalog().getFullNameToDb().containsKey(dbName)) {
+                db = (InfoSchemaDb) Catalog.getServingCatalog().getFullNameToDb().get(dbName);
+            } else {
+                db = new InfoSchemaDb(cluster.getName());
+                db.setClusterName(cluster.getName());
+            }
+            String errMsg = "InfoSchemaDb id shouldn't larger than 10000, please restart your FE server";
+            // Every time we construct the InfoSchemaDb, which id will increment.
+            // When InfoSchemaDb id larger than 10000 and put it to idToDb,
+            // which may be overwrite the normal db meta in idToDb,
+            // so we ensure InfoSchemaDb id less than 10000.
+            Preconditions.checkState(db.getId() < NEXT_ID_INIT_VALUE, errMsg);
+            idToDb.put(db.getId(), db);
+            fullNameToDb.put(db.getFullName(), db);
+            cluster.addDb(dbName, db.getId());
+            idToCluster.put(cluster.getId(), cluster);
+            nameToCluster.put(cluster.getName(), cluster);
         }
         LOG.info("finished replay cluster from image");
         return checksum;
@@ -6595,12 +6531,12 @@ public class Catalog {
 
     public void initDefaultCluster() {
         final List<Long> backendList = Lists.newArrayList();
-        final List<Backend> defaultClusterBackends = this.systemInfo.getClusterBackends(SystemInfoService.DEFAULT_CLUSTER);
+        final List<Backend> defaultClusterBackends = systemInfo.getClusterBackends(SystemInfoService.DEFAULT_CLUSTER);
         for (Backend backend : defaultClusterBackends) {
             backendList.add(backend.getId());
         }
 
-        final long id = this.getNextId();
+        final long id = getNextId();
         final Cluster cluster = new Cluster(SystemInfoService.DEFAULT_CLUSTER, id);
 
         // make sure one host hold only one backend.
@@ -6618,29 +6554,29 @@ public class Catalog {
         // we create default_cluster to meet the need for ease of use, because
         // most users have no multi tenant needs.
         cluster.setBackendIdList(backendList);
-        this.unprotectCreateCluster(cluster);
-        for (Database db : this.idToDb.values()) {
+        unprotectCreateCluster(cluster);
+        for (Database db : idToDb.values()) {
             db.setClusterName(SystemInfoService.DEFAULT_CLUSTER);
             cluster.addDb(db.getFullName(), db.getId());
         }
 
         // no matter default_cluster is created or not,
         // mark isDefaultClusterCreated as true
-        this.isDefaultClusterCreated = true;
-        this.editLog.logCreateCluster(cluster);
+        isDefaultClusterCreated = true;
+        editLog.logCreateCluster(cluster);
     }
 
     public void replayUpdateDb(DatabaseInfo info) {
-        final Database db = this.fullNameToDb.get(info.getDbName());
+        final Database db = fullNameToDb.get(info.getDbName());
         db.setClusterName(info.getClusterName());
         db.setDbState(info.getDbState());
     }
 
     public long saveCluster(CountingDataOutputStream dos, long checksum) throws IOException {
-        final int clusterCount = this.idToCluster.size();
+        final int clusterCount = idToCluster.size();
         checksum ^= clusterCount;
         dos.writeInt(clusterCount);
-        for (Map.Entry<Long, Cluster> entry : this.idToCluster.entrySet()) {
+        for (Map.Entry<Long, Cluster> entry : idToCluster.entrySet()) {
             long clusterId = entry.getKey();
             if (clusterId >= NEXT_ID_INIT_VALUE) {
                 checksum ^= clusterId;
@@ -6652,7 +6588,7 @@ public class Catalog {
     }
 
     public long saveBrokers(CountingDataOutputStream dos, long checksum) throws IOException {
-        Map<String, List<FsBroker>> addressListMap = this.brokerMgr.getBrokerListMap();
+        Map<String, List<FsBroker>> addressListMap = brokerMgr.getBrokerListMap();
         int size = addressListMap.size();
         checksum ^= size;
         dos.writeInt(size);
@@ -6672,29 +6608,27 @@ public class Catalog {
     }
 
     public long loadBrokers(DataInputStream dis, long checksum) throws IOException, DdlException {
-        if (MetaContext.get().getMetaVersion() >= FeMetaVersion.VERSION_31) {
-            int count = dis.readInt();
-            checksum ^= count;
-            for (long i = 0; i < count; ++i) {
-                String brokerName = Text.readString(dis);
-                int size = dis.readInt();
-                checksum ^= size;
-                List<FsBroker> addrs = Lists.newArrayList();
-                for (int j = 0; j < size; j++) {
-                    FsBroker addr = FsBroker.readIn(dis);
-                    addrs.add(addr);
-                }
-                this.brokerMgr.replayAddBrokers(brokerName, addrs);
+        int count = dis.readInt();
+        checksum ^= count;
+        for (long i = 0; i < count; ++i) {
+            String brokerName = Text.readString(dis);
+            int size = dis.readInt();
+            checksum ^= size;
+            List<FsBroker> addrs = Lists.newArrayList();
+            for (int j = 0; j < size; j++) {
+                FsBroker addr = FsBroker.readIn(dis);
+                addrs.add(addr);
             }
-            LOG.info("finished replay brokerMgr from image");
+            brokerMgr.replayAddBrokers(brokerName, addrs);
         }
+        LOG.info("finished replay brokerMgr from image");
         return checksum;
     }
 
     public void replayUpdateClusterAndBackends(BackendIdsUpdateInfo info) {
         for (long id : info.getBackendList()) {
-            final Backend backend = this.systemInfo.getBackend(id);
-            final Cluster cluster = this.nameToCluster.get(backend.getOwnerClusterName());
+            final Backend backend = systemInfo.getBackend(id);
+            final Cluster cluster = nameToCluster.get(backend.getOwnerClusterName());
             cluster.removeBackend(id);
             backend.setDecommissioned(false);
             backend.clearClusterName();
@@ -6707,10 +6641,10 @@ public class Catalog {
         String dumpFilePath;
         List<Database> databases = Lists.newArrayList();
         List<List<Table>> tableLists = Lists.newArrayList();
-        this.tryLock(true);
+        tryLock(true);
         try {
             // sort all dbs to avoid potential dead lock
-            for (long dbId : this.getDbIds()) {
+            for (long dbId : getDbIds()) {
                 Database db = this.getDbNullable(dbId);
                 databases.add(db);
             }
@@ -6727,25 +6661,25 @@ public class Catalog {
             }
             LOG.info("acquired all the tables' read lock.");
 
-            this.load.readLock();
+            load.readLock();
             LOG.info("acquired all jobs' read lock.");
-            long journalId = this.getMaxJournalId();
+            long journalId = getMaxJournalId();
             File dumpFile = new File(Config.meta_dir, "image." + journalId);
             dumpFilePath = dumpFile.getAbsolutePath();
             try {
                 LOG.info("begin to dump {}", dumpFilePath);
-                this.saveImage(dumpFile, journalId);
+                saveImage(dumpFile, journalId);
             } catch (IOException e) {
                 LOG.error("failed to dump image to {}", dumpFilePath, e);
             }
         } finally {
             // unlock all
-            this.load.readUnlock();
+            load.readUnlock();
             for (int i = databases.size() - 1; i >= 0; i--) {
                 MetaLockUtils.readUnlockTables(tableLists.get(i));
             }
             MetaLockUtils.readUnlockDatabases(databases);
-            this.unlock();
+            unlock();
         }
 
         LOG.info("finished dumping image to {}", dumpFilePath);
@@ -6815,8 +6749,8 @@ public class Catalog {
                 // By using a new id, load job will be aborted(just like partition is dropped),
                 // which is the right behavior.
                 long oldPartitionId = entry.getValue();
-                long newPartitionId = this.getNextId();
-                Partition newPartition = this.createPartitionWithIndices(db.getClusterName(),
+                long newPartitionId = getNextId();
+                Partition newPartition = createPartitionWithIndices(db.getClusterName(),
                         db.getId(), copiedTbl.getId(), copiedTbl.getBaseIndexId(),
                         newPartitionId, entry.getKey(),
                         copiedTbl.getIndexIdToMeta(),
@@ -6887,12 +6821,12 @@ public class Catalog {
             }
 
             // replace
-            this.truncateTableInternal(olapTable, newPartitions, truncateEntireTable);
+            truncateTableInternal(olapTable, newPartitions, truncateEntireTable);
 
             // write edit log
             TruncateTableInfo info = new TruncateTableInfo(db.getId(), olapTable.getId(), newPartitions,
                     truncateEntireTable);
-            this.editLog.logTruncateTable(info);
+            editLog.logTruncateTable(info);
         } finally {
             olapTable.writeUnlock();
         }
@@ -6930,7 +6864,7 @@ public class Catalog {
         OlapTable olapTable = db.getTableOrMetaException(info.getTblId(), TableType.OLAP);
         olapTable.writeLock();
         try {
-            this.truncateTableInternal(olapTable, info.getPartitions(), info.isEntireTable());
+            truncateTableInternal(olapTable, info.getPartitions(), info.isEntireTable());
 
             if (!Catalog.isCheckpointThread()) {
                 // add tablet to inverted index
@@ -7046,17 +6980,16 @@ public class Catalog {
         }
     }
 
-    // Convert table's distribution type from random to hash.
-    // random distribution is no longer supported.
+    // Convert table's distribution type from hash to random.
     public void convertDistributionType(Database db, OlapTable tbl) throws DdlException {
         tbl.writeLockOrDdlException();
         try {
-            if (!tbl.convertRandomDistributionToHashDistribution()) {
-                throw new DdlException("Table " + tbl.getName() + " is not random distributed");
+            if (!tbl.convertHashDistributionToRandomDistribution()) {
+                throw new DdlException("Table " + tbl.getName() + " is not hash distributed");
             }
             TableInfo tableInfo = TableInfo.createForModifyDistribution(db.getId(), tbl.getId());
-            this.editLog.logModifyDistributionType(tableInfo);
-            LOG.info("finished to modify distribution type of table: " + tbl.getName());
+            editLog.logModifyDistributionType(tableInfo);
+            LOG.info("finished to modify distribution type of table from hash to random : " + tbl.getName());
         } finally {
             tbl.writeUnlock();
         }
@@ -7067,8 +7000,8 @@ public class Catalog {
         OlapTable olapTable = db.getTableOrMetaException(info.getTableId(), TableType.OLAP);
         olapTable.writeLock();
         try {
-            olapTable.convertRandomDistributionToHashDistribution();
-            LOG.info("replay modify distribution type of table: " + olapTable.getName());
+            olapTable.convertHashDistributionToRandomDistribution();
+            LOG.info("replay modify distribution type of table from hash to random : " + olapTable.getName());
         } finally {
             olapTable.writeUnlock();
         }
@@ -7099,7 +7032,7 @@ public class Catalog {
         // write log
         ReplacePartitionOperationLog info = new ReplacePartitionOperationLog(db.getId(), olapTable.getId(),
                 partitionNames, tempPartitionNames, isStrictRange, useTempPartitionName);
-        this.editLog.logReplaceTempPartition(info);
+        editLog.logReplaceTempPartition(info);
         LOG.info("finished to replace partitions {} with temp partitions {} from table: {}",
                 clause.getPartitionNames(), clause.getTempPartitionNames(), olapTable.getName());
     }
@@ -7123,7 +7056,7 @@ public class Catalog {
     }
 
     public void installPlugin(InstallPluginStmt stmt) throws UserException, IOException {
-        this.pluginMgr.installPlugin(stmt);
+        pluginMgr.installPlugin(stmt);
     }
 
     public long savePlugins(DataOutputStream dos, long checksum) throws IOException {
@@ -7132,32 +7065,30 @@ public class Catalog {
     }
 
     public long loadPlugins(DataInputStream dis, long checksum) throws IOException {
-        if (Catalog.getCurrentCatalogJournalVersion() >= FeMetaVersion.VERSION_78) {
-            Catalog.getCurrentPluginMgr().readFields(dis);
-        }
+        Catalog.getCurrentPluginMgr().readFields(dis);
         LOG.info("finished replay plugins from image");
         return checksum;
     }
 
     public void replayInstallPlugin(PluginInfo pluginInfo) throws MetaNotFoundException {
         try {
-            this.pluginMgr.replayLoadDynamicPlugin(pluginInfo);
+            pluginMgr.replayLoadDynamicPlugin(pluginInfo);
         } catch (Exception e) {
             throw new MetaNotFoundException(e);
         }
     }
 
     public void uninstallPlugin(UninstallPluginStmt stmt) throws IOException, UserException {
-        PluginInfo info = this.pluginMgr.uninstallPlugin(stmt.getPluginName());
+        PluginInfo info = pluginMgr.uninstallPlugin(stmt.getPluginName());
         if (null != info) {
-            this.editLog.logUninstallPlugin(info);
+            editLog.logUninstallPlugin(info);
         }
         LOG.info("uninstall plugin = " + stmt.getPluginName());
     }
 
     public void replayUninstallPlugin(PluginInfo pluginInfo) throws MetaNotFoundException {
         try {
-            this.pluginMgr.uninstallPlugin(pluginInfo.getName());
+            pluginMgr.uninstallPlugin(pluginInfo.getName());
         } catch (Exception e) {
             throw new MetaNotFoundException(e);
         }
@@ -7168,7 +7099,7 @@ public class Catalog {
         CheckType type = stmt.getType();
         switch (type) {
             case CONSISTENCY:
-                this.consistencyChecker.addTabletsToCheck(stmt.getTabletIds());
+                consistencyChecker.addTabletsToCheck(stmt.getTabletIds());
                 break;
             default:
                 break;
@@ -7180,20 +7111,20 @@ public class Catalog {
         long tabletId = stmt.getTabletId();
         long backendId = stmt.getBackendId();
         ReplicaStatus status = stmt.getStatus();
-        this.setReplicaStatusInternal(tabletId, backendId, status, false);
+        setReplicaStatusInternal(tabletId, backendId, status, false);
     }
 
     public void setReplicaStatus(long tabletId, long backendId, ReplicaStatus status) throws MetaNotFoundException {
-        this.setReplicaStatusInternal(tabletId, backendId, status, false);
+        setReplicaStatusInternal(tabletId, backendId, status, false);
     }
 
     public void replaySetReplicaStatus(SetReplicaStatusOperationLog log) throws MetaNotFoundException {
-        this.setReplicaStatusInternal(log.getTabletId(), log.getBackendId(), log.getReplicaStatus(), true);
+        setReplicaStatusInternal(log.getTabletId(), log.getBackendId(), log.getReplicaStatus(), true);
     }
 
     private void setReplicaStatusInternal(long tabletId, long backendId, ReplicaStatus status, boolean isReplay) throws MetaNotFoundException {
         try {
-            TabletMeta meta = this.tabletInvertedIndex.getTabletMeta(tabletId);
+            TabletMeta meta = tabletInvertedIndex.getTabletMeta(tabletId);
             if (meta == null) {
                 throw new MetaNotFoundException("tablet does not exist");
             }
@@ -7201,7 +7132,7 @@ public class Catalog {
             Table table = db.getTableOrMetaException(meta.getTableId());
             table.writeLockOrMetaException();
             try {
-                Replica replica = this.tabletInvertedIndex.getReplica(tabletId, backendId);
+                Replica replica = tabletInvertedIndex.getReplica(tabletId, backendId);
                 if (replica == null) {
                     throw new MetaNotFoundException("replica does not exist on backend, beId=" + backendId);
                 }
@@ -7209,7 +7140,7 @@ public class Catalog {
                     if (replica.setBad(status == ReplicaStatus.BAD)) {
                         if (!isReplay) {
                             SetReplicaStatusOperationLog log = new SetReplicaStatusOperationLog(backendId, tabletId, status);
-                            this.getEditLog().logSetReplicaStatus(log);
+                            getEditLog().logSetReplicaStatus(log);
                         }
                         LOG.info("set replica {} of tablet {} on backend {} as {}. is replay: {}",
                                 replica.getId(), tabletId, backendId, status, isReplay);

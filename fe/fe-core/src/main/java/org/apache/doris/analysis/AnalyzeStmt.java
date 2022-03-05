@@ -66,6 +66,6 @@ public class AnalyzeStmt extends DdlStmt {
 
     @Override
     public RedirectStatus getRedirectStatus() {
-        return RedirectStatus.FORWARD_WITH_SYNC;
+        return RedirectStatus.FORWARD_NO_SYNC;
     }
 }
