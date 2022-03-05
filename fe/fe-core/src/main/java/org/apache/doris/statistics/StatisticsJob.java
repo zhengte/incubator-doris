@@ -320,7 +320,7 @@ public class StatisticsJob {
      * - min, max, ndv: These three full indicators are collected by a sub-task.
      * - max_col_lens, avg_col_lens: Two sampling indicators were collected by a sub-task.
      * <p>
-     * If the size of the table is greater than the maximum number of Be scans for a single BE,
+     * If the table row-count is greater than the maximum number of Be scans for a single BE,
      * we'll divide subtasks by partition. relevant values(3700000000L&600000000L) are derived from test.
      *
      *
