@@ -54,8 +54,8 @@ import java.util.stream.Collectors;
  * <p>
  * AnalyzeStmt: Analyze t1(c1, c2)...
  * StatisticsJob:
- * tableId [t1, t2]
- * tableIdToColumnName <t2, [c1,c2,c3]>
+ * tableId [t1]
+ * tableIdToColumnName <t1, [c1,c2]>
  */
 public class StatisticsJob {
 
