@@ -1400,6 +1400,9 @@ public class Catalog {
         partitionInMemoryInfoCollector.start();
         streamLoadRecordMgr.start();
         icebergTableCreationRecordMgr.start();
+        // start daemon thread to collect statistics
+        statisticsJobScheduler.start();
+        statisticsTaskScheduler.start();
     }
 
     // start threads that should running on all FE
@@ -6499,7 +6502,7 @@ public class Catalog {
                         + cluster.getBackendIdList().size());
             }
             // The number of BE in cluster is not same as in SystemInfoService, when perform 'ALTER
-            // SYSTEM ADD BACKEND TO ...' or 'ALTER SYSTEM ADD BACKEND ...', because both of them are 
+            // SYSTEM ADD BACKEND TO ...' or 'ALTER SYSTEM ADD BACKEND ...', because both of them are
             // for adding BE to some Cluster, but loadCluster is after loadBackend.
             cluster.setBackendIdList(latestBackendIds);
 
