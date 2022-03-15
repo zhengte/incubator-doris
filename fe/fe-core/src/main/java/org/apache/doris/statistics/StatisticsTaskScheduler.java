@@ -17,29 +17,35 @@
 
 package org.apache.doris.statistics;
 
+import org.apache.doris.catalog.Catalog;
 import org.apache.doris.common.Config;
+import org.apache.doris.common.ThreadPoolManager;
 import org.apache.doris.common.util.MasterDaemon;
 
+import com.clearspring.analytics.util.Lists;
 import com.google.common.collect.Queues;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import com.clearspring.analytics.util.Lists;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /*
 Schedule statistics task
  */
 public class StatisticsTaskScheduler extends MasterDaemon {
+
+
     private final static Logger LOG = LogManager.getLogger(StatisticsTaskScheduler.class);
 
-    private Queue<StatisticsTask> queue = Queues.newLinkedBlockingQueue();
+    private final Queue<StatisticsTask> queue = Queues.newLinkedBlockingQueue();
 
     public StatisticsTaskScheduler() {
         super("Statistics task scheduler", 0);
@@ -47,33 +53,52 @@ public class StatisticsTaskScheduler extends MasterDaemon {
 
     @Override
     protected void runAfterCatalogReady() {
-        // TODO
-        // step1: task n concurrent tasks from the queue
-        List<StatisticsTask> tasks = peek();
-        // step2: execute tasks
-        ExecutorService executor = Executors.newFixedThreadPool(tasks.size());
-        List<Future<StatisticsTaskResult>> taskResultList = null;
         try {
-            taskResultList = executor.invokeAll(tasks);
+            Thread.sleep(1000 * 2);
         } catch (InterruptedException e) {
-            LOG.warn("Failed to execute this turn of statistics tasks", e);
+            e.printStackTrace();
         }
-        // step3: update job and statistics
-        handleTaskResult(taskResultList);
-        // step4: remove task from queue
-        remove(tasks.size());
+        StatisticsJobManager statisticsJobManager = Catalog.getCurrentCatalog().getStatisticsJobManager();
+        // statisticsJobManager.showJobsStats();
 
+        StatisticsManager statisticsManager = Catalog.getCurrentCatalog().getStatisticsManager();
+        // statisticsManager.getStatistics().showStatistics();
+
+        // step1: task n concurrent tasks from the queue
+        List<StatisticsTask> tasks = this.peek();
+        if (!tasks.isEmpty()) {
+            Map<Long, Future<StatisticsTaskResult>> futureMap = new HashMap<>(tasks.size());
+            // step2: execute tasks
+            ThreadPoolExecutor executor = ThreadPoolManager.newDaemonCacheThreadPool(tasks.size(), "statistic-pool", true);
+            for (StatisticsTask task : tasks) {
+                long jobId = task.getJobId();
+                Future<StatisticsTaskResult> taskFuture = executor.submit(task);
+                futureMap.put(jobId, taskFuture);
+                Map<Long, StatisticsJob> idToStatisticsJob = statisticsJobManager.getIdToStatisticsJob();
+                StatisticsJob statisticsJob = idToStatisticsJob.get(jobId);
+                if (statisticsJob.getJobState() == StatisticsJob.JobState.SCHEDULING) {
+                    statisticsJob.setJobState(StatisticsJob.JobState.RUNNING);
+                    idToStatisticsJob.put(jobId, statisticsJob);
+                    // statisticsJobManager.setIdToStatisticsJob(idToStatisticsJob);
+                }
+            }
+            // step3: update job and statistics
+            this.handleTaskResult(futureMap);
+            executor.shutdownNow();
+        }
+        // step4: remove task from queue
+        this.remove(tasks.size());
     }
 
     public void addTasks(List<StatisticsTask> statisticsTaskList) {
-        queue.addAll(statisticsTaskList);
+        this.queue.addAll(statisticsTaskList);
     }
 
     private List<StatisticsTask> peek() {
         List<StatisticsTask> tasks = Lists.newArrayList();
         int i = Config.cbo_concurrency_statistics_task_num;
         while (i > 0) {
-            StatisticsTask task = queue.peek();
+            StatisticsTask task = this.queue.peek();
             if (task == null) {
                 break;
             }
@@ -84,10 +109,41 @@ public class StatisticsTaskScheduler extends MasterDaemon {
     }
 
     private void remove(int size) {
-        // TODO
+        for (int i = 0; i < size; i++) {
+            // StatisticsTask statisticsTask = new StatisticsTask(1, 1);
+            // this.queue.remove(statisticsTask);
+            this.queue.poll();
+        }
     }
 
-    private void handleTaskResult(List<Future<StatisticsTaskResult>> taskResultLists) {
-        // TODO
+    private void handleTaskResult(Map<Long, Future<StatisticsTaskResult>> futureMap) {
+        StatisticsManager statisticsManager = Catalog.getCurrentCatalog().getStatisticsManager();
+        StatisticsJobManager statisticsJobManager = Catalog.getCurrentCatalog().getStatisticsJobManager();
+        Set<Map.Entry<Long, Future<StatisticsTaskResult>>> futures = futureMap.entrySet();
+        for (Map.Entry<Long, Future<StatisticsTaskResult>> future : futures) {
+            Long jobId = future.getKey();
+            try {
+                StatisticsTaskResult taskResult = future.getValue().get();
+                StatsCategoryDesc categoryDesc = taskResult.getCategoryDesc();
+                StatsCategoryDesc.StatsCategory category = categoryDesc.getCategory();
+                if (category == StatsCategoryDesc.StatsCategory.TABLE) {
+                    // 更新表统计信息
+                    // statisticsManager.alterTableStatistics(taskResult);
+                } else if (category == StatsCategoryDesc.StatsCategory.COLUMN) {
+                    // 更新列统计信息
+                    // statisticsManager.alterColumnStatistics(taskResult);
+                }
+                // 变更job的task进度--成功
+                // statisticsJobManager.alterStatisticsJobStats(taskResult);
+            } catch (InterruptedException | ExecutionException e) {
+                // 变更job的task进度--失败
+                Map<Long, StatisticsJob> idToStatisticsJob = statisticsJobManager.getIdToStatisticsJob();
+                StatisticsJob statisticsJob = idToStatisticsJob.get(jobId);
+                statisticsJob.setJobState(StatisticsJob.JobState.FAILED);
+                idToStatisticsJob.put(jobId, statisticsJob);
+                // statisticsJobManager.setIdToStatisticsJob(idToStatisticsJob);
+                LOG.warn("Failed to execute this turn of statistics tasks", e);
+            }
+        }
     }
 }
