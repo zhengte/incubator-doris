@@ -67,7 +67,8 @@ public class SQLStatisticsTask extends StatisticsTask {
         for (int i = 0; i < statsTypeList.size(); i++) {
             statsTypeToValue.put(statsTypeList.get(i), queryResultList.get(i));
         }
-        StatisticsTaskResult result = new StatisticsTaskResult(granularityDesc, categoryDesc, statsTypeToValue);
-        return result;
+        // StatisticsTaskResult result = new StatisticsTaskResult(granularityDesc, categoryDesc, statsTypeToValue);
+        // return result;
+        return null;
     }
 }
