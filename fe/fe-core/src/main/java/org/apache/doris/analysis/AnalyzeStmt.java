@@ -17,6 +17,9 @@
 
 package org.apache.doris.analysis;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Collect statistics about a database
  *
@@ -31,5 +34,30 @@ package org.apache.doris.analysis;
  *
  */
 public class AnalyzeStmt extends DdlStmt {
+    private final TableName tbl;
+    private final List<String> columnNames;
+    private final Map<String, String> properties;
 
+    public AnalyzeStmt(TableName tbl, List<String> columns, Map<String, String> properties) {
+        this.tbl = tbl;
+        this.columnNames = columns;
+        this.properties = properties;
+    }
+
+    public List<String> getColumnNames() {
+        return this.columnNames;
+    }
+
+    public TableName getTableName() {
+        return this.tbl;
+    }
+
+    public Map<String, String> getProperties() {
+        return this.properties;
+    }
+
+    @Override
+    public RedirectStatus getRedirectStatus() {
+        return RedirectStatus.FORWARD_NO_SYNC;
+    }
 }
