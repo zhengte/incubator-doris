@@ -52,4 +52,60 @@ public class StatisticsTask implements Callable<StatisticsTaskResult> {
         // TODO
         return null;
     }
+
+    /**
+     * 判断task是否相等
+     * 需要做逻辑相等判断的类，覆盖equals方法，如果还需要在散列表（HashMap、HashSet）中作为key，需要覆盖hashcode方法。
+     *
+     * @param obj obj
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof StatisticsTask){
+            StatisticsTask task = (StatisticsTask)obj;
+            return this.jobId == task.getJobId() && this.id == task.getId();
+        }
+        return false;
+    }
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getJobId() {
+        return this.jobId;
+    }
+
+    public void setJobId(long jobId) {
+        this.jobId = jobId;
+    }
+
+    public StatsGranularityDesc getGranularityDesc() {
+        return this.granularityDesc;
+    }
+
+    public void setGranularityDesc(StatsGranularityDesc granularityDesc) {
+        this.granularityDesc = granularityDesc;
+    }
+
+    public StatsCategoryDesc getCategoryDesc() {
+        return this.categoryDesc;
+    }
+
+    public void setCategoryDesc(StatsCategoryDesc categoryDesc) {
+        this.categoryDesc = categoryDesc;
+    }
+
+    public List<StatsType> getStatsTypeList() {
+        return this.statsTypeList;
+    }
+
+    public void setStatsTypeList(List<StatsType> statsTypeList) {
+        this.statsTypeList = statsTypeList;
+    }
 }

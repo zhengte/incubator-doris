@@ -94,4 +94,12 @@ public class TableStats {
     public Map<String, ColumnStats> getNameToColumnStats() {
         return nameToColumnStats;
     }
+
+    public long getRowCount() {
+        return this.rowCount;
+    }
+
+    public long getDataSize() {
+        return this.dataSize;
+    }
 }
